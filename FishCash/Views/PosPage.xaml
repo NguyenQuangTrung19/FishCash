@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
+             x:DataType="viewmodels:PosViewModel"
+             x:Class="FishCash.Views.PosPage"
+             Title="{Binding Title}">
+
+    <Grid ColumnDefinitions="2*, 1*" ColumnSpacing="10" Padding="15">
+        
+        <!-- Cột trái: Danh sách Sản phẩm -->
+        <Grid Grid.Column="0" RowDefinitions="Auto, *">
+            <Label Grid.Row="0" Text="Mặt hàng" FontSize="26" FontAttributes="Bold" TextColor="#1e293b" Margin="0,0,0,15"/>
+            
+            <RefreshView Grid.Row="1" Command="{Binding LoadProductsCommand}" IsRefreshing="{Binding IsBusy}">
+                <CollectionView ItemsSource="{Binding Products}">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="10" HorizontalItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame HasShadow="True" 
+                                   CornerRadius="10" 
+                                   Padding="15"
+                                   BackgroundColor="White"
+                                   BorderColor="#cbd5e1">
+                                <Grid RowDefinitions="Auto, Auto, Auto">
+                                    <Label Grid.Row="0" Text="{Binding Name}" FontSize="18" FontAttributes="Bold" TextColor="#334155" LineBreakMode="TailTruncation" MaxLines="2"/>
+                                    <Label Grid.Row="1" Text="{Binding Category.Name}" FontSize="12" TextColor="#64748b" Margin="0,5,0,0"/>
+                                    
+                                    <Grid Grid.Row="2" ColumnDefinitions="*, Auto" Margin="0,15,0,0" VerticalOptions="End">
+                                        <Label Grid.Column="0" Text="{Binding Price, StringFormat='{0:N0} đ'}" TextColor="#dc2626" FontAttributes="Bold" FontSize="16" VerticalOptions="Center"/>
+                                        <Button Grid.Column="1" 
+                                                Text="+" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PosViewModel}}, Path=AddToCartCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#10b981"
+                                                TextColor="White"
+                                                CornerRadius="8"
+                                                WidthRequest="40"
+                                                HeightRequest="40"
+                                                Padding="0"/>
+                                    </Grid>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+
+        <!-- Cột phải: Giỏ hàng & Thanh toán -->
+        <Frame Grid.Column="1" HasShadow="False" CornerRadius="12" Padding="0" BackgroundColor="#f8fafc" BorderColor="#e2e8f0">
+            <Grid RowDefinitions="Auto, *, Auto">
+                
+                <Frame Grid.Row="0" BackgroundColor="#0f172a" CornerRadius="10" Margin="0,0,0,10" Padding="15">
+                    <Label Text="Giỏ Hàng" TextColor="White" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
+                </Frame>
+
+                <CollectionView Grid.Row="1" ItemsSource="{Binding CartService.Items}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*, Auto, Auto" Padding="10" Margin="0,0,0,5" BackgroundColor="White">
+                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                                    <Label Text="{Binding Product.Name}" FontAttributes="Bold" TextColor="#334155"/>
+                                    <Label Text="{Binding SubTotal, StringFormat='{0:N0} đ'}" TextColor="#ef4444" FontSize="13"/>
+                                </VerticalStackLayout>
+
+                                <Label Grid.Column="1" Text="{Binding Quantity, StringFormat='x{0}'}" FontAttributes="Bold" VerticalOptions="Center" Margin="10,0"/>
+
+                                <ImageButton Grid.Column="2" 
+                                             Source="dotnet_bot.png" 
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PosViewModel}}, Path=RemoveFromCartCommand}"
+                                             CommandParameter="{Binding Product}"
+                                             WidthRequest="24" HeightRequest="24" BackgroundColor="Transparent"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Footer Checkout -->
+                <Frame Grid.Row="2" BackgroundColor="White" BorderColor="#e2e8f0" CornerRadius="10" Padding="20">
+                    <VerticalStackLayout Spacing="15">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Grid.Column="0" Text="Tổng cộng:" FontSize="18" TextColor="#64748b"/>
+                            <Label Grid.Column="1" Text="{Binding TotalAmount, StringFormat='{0:N0} VNĐ'}" FontSize="24" FontAttributes="Bold" TextColor="#dc2626"/>
+                        </Grid>
+
+                        <Button Text="Thanh Toán" 
+                                Command="{Binding CheckoutCommand}"
+                                BackgroundColor="#2563eb"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                FontSize="18"
+                                CornerRadius="10"
+                                Padding="15"/>
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+        </Frame>
+    </Grid>
+</ContentPage>

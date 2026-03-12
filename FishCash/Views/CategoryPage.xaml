@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
+             x:DataType="viewmodels:CategoryViewModel"
+             x:Class="FishCash.Views.CategoryPage"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto, Auto, *" Padding="20">
+        <!-- Tiêu đề lớn sang trọng -->
+        <Label Text="Danh mục Hải sản" 
+               FontSize="32" 
+               FontAttributes="Bold"
+               TextColor="#1e293b"
+               Margin="0,0,0,20"/>
+
+        <!-- Form thêm mới -->
+        <Frame Grid.Row="1" 
+               HasShadow="True" 
+               CornerRadius="12" 
+               Padding="15" 
+               Margin="0,0,0,20"
+               BackgroundColor="White"
+               BorderColor="#e2e8f0">
+            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="15">
+                <Entry Grid.Column="0" 
+                       Placeholder="Nhập tên danh mục mới..." 
+                       Text="{Binding NewCategoryName}"
+                       FontSize="16"
+                       VerticalOptions="Center"/>
+                <Button Grid.Column="1" 
+                        Text="+ Thêm Danh mục" 
+                        Command="{Binding AddCategoryCommand}"
+                        BackgroundColor="#2563eb"
+                        TextColor="White"
+                        CornerRadius="8"
+                        FontAttributes="Bold"
+                        Padding="20,10"/>
+            </Grid>
+        </Frame>
+
+        <!-- Danh sách -->
+        <RefreshView Grid.Row="2" Command="{Binding LoadCategoriesCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Categories}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame HasShadow="False" 
+                               CornerRadius="10" 
+                               Padding="15"
+                               BorderColor="#e2e8f0"
+                               BackgroundColor="#f8fafc">
+                            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                <Label Grid.Column="0" 
+                                       Text="{Binding Name}" 
+                                       FontSize="18" 
+                                       FontAttributes="Bold"
+                                       TextColor="#334155"
+                                       VerticalOptions="Center"/>
+                                <!-- Button Options can be added here -->
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                
+                <CollectionView.EmptyView>
+                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Chưa có danh mục nào" 
+                               FontSize="18" 
+                               TextColor="Gray"
+                               HorizontalOptions="Center"/>
+                    </StackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
+             x:DataType="viewmodels:ProductViewModel"
+             x:Class="FishCash.Views.ProductPage"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto, Auto, *" Padding="20">
+        
+        <!-- Header -->
+        <Label Text="Kho Hải sản" 
+               FontSize="32" 
+               FontAttributes="Bold"
+               TextColor="#1e293b"
+               Margin="0,0,0,20"/>
+
+        <!-- Form Add Product -->
+        <Frame Grid.Row="1" 
+               HasShadow="True" 
+               CornerRadius="12" 
+               Padding="15" 
+               Margin="0,0,0,20"
+               BackgroundColor="White"
+               BorderColor="#e2e8f0">
+            <VerticalStackLayout Spacing="15">
+                <Grid ColumnDefinitions="*, *, *" ColumnSpacing="15">
+                    <!-- Tên SP -->
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Tên sản phẩm" TextColor="#64748b" FontSize="14" Margin="0,0,0,5"/>
+                        <Entry Placeholder="VD: Mực ống tươi..." Text="{Binding NewProductName}" />
+                    </VerticalStackLayout>
+                    
+                    <!-- Giá -->
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Giá bán (VNĐ)" TextColor="#64748b" FontSize="14" Margin="0,0,0,5"/>
+                        <Entry Placeholder="150000" Keyboard="Numeric" Text="{Binding NewProductPrice}" />
+                    </VerticalStackLayout>
+
+                    <!-- Danh mục -->
+                    <VerticalStackLayout Grid.Column="2">
+                        <Label Text="Danh mục" TextColor="#64748b" FontSize="14" Margin="0,0,0,5"/>
+                        <Picker ItemsSource="{Binding Categories}" 
+                                ItemDisplayBinding="{Binding Name}" 
+                                SelectedItem="{Binding SelectedCategory}" 
+                                Title="Chọn danh mục" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <Grid ColumnDefinitions="*, Auto" ColumnSpacing="15">
+                    <HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
+                        <Label Text="Đơn vị tính:" VerticalOptions="Center" TextColor="#64748b"/>
+                        <Entry Text="{Binding NewProductUnit}" WidthRequest="80" HorizontalOptions="Start"/>
+                    </HorizontalStackLayout>
+                    
+                    <Button Grid.Column="1" 
+                            Text="+ Nhập Kho" 
+                            Command="{Binding AddProductCommand}"
+                            BackgroundColor="#0ea5e9"
+                            TextColor="White"
+                            CornerRadius="8"
+                            FontAttributes="Bold"
+                            Padding="30,12"/>
+                </Grid>
+            </VerticalStackLayout>
+        </Frame>
+
+        <!-- Product List -->
+        <RefreshView Grid.Row="2" Command="{Binding LoadDataCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Products}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame HasShadow="False" 
+                               CornerRadius="10" 
+                               Padding="15"
+                               BorderColor="#e2e8f0"
+                               BackgroundColor="#f8fafc">
+                            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                    <Label Text="{Binding Name}" 
+                                           FontSize="18" 
+                                           FontAttributes="Bold"
+                                           TextColor="#0f172a"/>
+                                    <HorizontalStackLayout Spacing="10">
+                                        <Frame BackgroundColor="#e0f2fe" CornerRadius="4" Padding="8,4" HasShadow="False">
+                                            <Label Text="{Binding Category.Name}" TextColor="#0284c7" FontSize="12" FontAttributes="Bold"/>
+                                        </Frame>
+                                        <Label Text="{Binding Price, StringFormat='{0:N0} VNĐ'}" TextColor="#ef4444" FontAttributes="Bold" FontSize="14" VerticalOptions="Center"/>
+                                        <Label Text="{Binding Unit, StringFormat='/ {0}'}" TextColor="#64748b" FontSize="14" VerticalOptions="Center"/>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>
