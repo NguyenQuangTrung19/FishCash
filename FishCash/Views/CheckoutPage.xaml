@@ -5,33 +5,30 @@
              x:DataType="viewmodels:CheckoutViewModel"
              x:Class="FishCash.Views.CheckoutPage"
              Title="{Binding Title}"
-             BackgroundColor="#f1f5f9">
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20" HorizontalOptions="Center" MaximumWidthRequest="500">
             
-            <Frame HasShadow="True" CornerRadius="12" Padding="30" BackgroundColor="White" BorderColor="#e2e8f0">
+            <Frame Style="{StaticResource CardFrame}" Padding="30">
                 <VerticalStackLayout Spacing="15" HorizontalOptions="Center">
-                    <Label Text="Thanh Toán Thành Công!" 
-                           FontSize="28" 
-                           FontAttributes="Bold" 
-                           TextColor="#10b981" 
-                           HorizontalOptions="Center"/>
+                    
+                    <Label Text="✅ Thanh Toán Thành Công!" Style="{StaticResource SuccessTitle}"/>
                            
                     <Label Text="{Binding CurrentOrder.TotalAmount, StringFormat='Tổng: {0:N0} VNĐ'}" 
-                           FontSize="24" 
-                           TextColor="#ef4444" 
-                           FontAttributes="Bold"
+                           Style="{StaticResource PriceLabelLarge}"
                            HorizontalOptions="Center"/>
 
-                    <BoxView HeightRequest="1" Color="#e2e8f0" Margin="0,10"/>
+                    <BoxView Style="{StaticResource Divider}"/>
 
                     <Label Text="Quét mã QR để thanh toán" 
                            FontSize="16" 
-                           TextColor="#64748b" 
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}" 
                            HorizontalOptions="Center"/>
 
-                    <Frame Padding="10" BorderColor="#e2e8f0" CornerRadius="10" HasShadow="False" HorizontalOptions="Center">
+                    <Frame Padding="10" 
+                           BorderColor="{AppThemeBinding Light={StaticResource CardBorder}, Dark={StaticResource CardBorderDark}}" 
+                           CornerRadius="10" HasShadow="False" HorizontalOptions="Center">
                         <Image Source="{Binding QrCodeUrl}" 
                                WidthRequest="250" 
                                HeightRequest="250"
@@ -40,19 +37,13 @@
 
                     <Button Text="🖨️ In Hóa Đơn &amp; Lưu" 
                             Command="{Binding PrintInvoiceCommand}"
-                            BackgroundColor="#0ea5e9"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            CornerRadius="8"
+                            Style="{StaticResource InfoButton}"
                             Margin="0,20,0,0"
                             Padding="15"/>
                             
                     <Button Text="Hoàn tất &amp; Đóng" 
                             Command="{Binding DoneCommand}"
-                            BackgroundColor="#cbd5e1"
-                            TextColor="#334155"
-                            FontAttributes="Bold"
-                            CornerRadius="8"
+                            Style="{StaticResource SecondaryButton}"
                             Padding="15"/>
                 </VerticalStackLayout>
             </Frame>

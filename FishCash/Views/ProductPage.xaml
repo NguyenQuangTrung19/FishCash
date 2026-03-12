@@ -4,42 +4,33 @@
              xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
              x:DataType="viewmodels:ProductViewModel"
              x:Class="FishCash.Views.ProductPage"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
     <Grid RowDefinitions="Auto, Auto, *" Padding="20">
         
         <!-- Header -->
-        <Label Text="Kho Hải sản" 
-               FontSize="32" 
-               FontAttributes="Bold"
-               TextColor="#1e293b"
-               Margin="0,0,0,20"/>
+        <Label Text="🦐 Kho Hải sản" Style="{StaticResource PageHeader}"/>
 
         <!-- Form Add Product -->
-        <Frame Grid.Row="1" 
-               HasShadow="True" 
-               CornerRadius="12" 
-               Padding="15" 
-               Margin="0,0,0,20"
-               BackgroundColor="White"
-               BorderColor="#e2e8f0">
+        <Frame Grid.Row="1" Style="{StaticResource CardFrame}" Margin="0,0,0,20">
             <VerticalStackLayout Spacing="15">
                 <Grid ColumnDefinitions="*, *, *" ColumnSpacing="15">
                     <!-- Tên SP -->
                     <VerticalStackLayout Grid.Column="0">
-                        <Label Text="Tên sản phẩm" TextColor="#64748b" FontSize="14" Margin="0,0,0,5"/>
+                        <Label Text="Tên sản phẩm" Style="{StaticResource FormLabel}"/>
                         <Entry Placeholder="VD: Mực ống tươi..." Text="{Binding NewProductName}" />
                     </VerticalStackLayout>
                     
                     <!-- Giá -->
                     <VerticalStackLayout Grid.Column="1">
-                        <Label Text="Giá bán (VNĐ)" TextColor="#64748b" FontSize="14" Margin="0,0,0,5"/>
+                        <Label Text="Giá bán (VNĐ)" Style="{StaticResource FormLabel}"/>
                         <Entry Placeholder="150000" Keyboard="Numeric" Text="{Binding NewProductPrice}" />
                     </VerticalStackLayout>
 
                     <!-- Danh mục -->
                     <VerticalStackLayout Grid.Column="2">
-                        <Label Text="Danh mục" TextColor="#64748b" FontSize="14" Margin="0,0,0,5"/>
+                        <Label Text="Danh mục" Style="{StaticResource FormLabel}"/>
                         <Picker ItemsSource="{Binding Categories}" 
                                 ItemDisplayBinding="{Binding Name}" 
                                 SelectedItem="{Binding SelectedCategory}" 
@@ -49,17 +40,15 @@
 
                 <Grid ColumnDefinitions="*, Auto" ColumnSpacing="15">
                     <HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
-                        <Label Text="Đơn vị tính:" VerticalOptions="Center" TextColor="#64748b"/>
+                        <Label Text="Đơn vị tính:" VerticalOptions="Center" 
+                               Style="{StaticResource SubText}" FontSize="14"/>
                         <Entry Text="{Binding NewProductUnit}" WidthRequest="80" HorizontalOptions="Start"/>
                     </HorizontalStackLayout>
                     
                     <Button Grid.Column="1" 
                             Text="+ Nhập Kho" 
                             Command="{Binding AddProductCommand}"
-                            BackgroundColor="#0ea5e9"
-                            TextColor="White"
-                            CornerRadius="8"
-                            FontAttributes="Bold"
+                            Style="{StaticResource InfoButton}"
                             Padding="30,12"/>
                 </Grid>
             </VerticalStackLayout>
@@ -73,23 +62,20 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame HasShadow="False" 
-                               CornerRadius="10" 
-                               Padding="15"
-                               BorderColor="#e2e8f0"
-                               BackgroundColor="#f8fafc">
+                        <Frame Style="{StaticResource CardFrameFlat}">
                             <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
                                 <VerticalStackLayout Grid.Column="0" Spacing="5">
-                                    <Label Text="{Binding Name}" 
-                                           FontSize="18" 
-                                           FontAttributes="Bold"
-                                           TextColor="#0f172a"/>
+                                    <Label Text="{Binding Name}" Style="{StaticResource ProductName}"/>
                                     <HorizontalStackLayout Spacing="10">
-                                        <Frame BackgroundColor="#e0f2fe" CornerRadius="4" Padding="8,4" HasShadow="False">
-                                            <Label Text="{Binding Category.Name}" TextColor="#0284c7" FontSize="12" FontAttributes="Bold"/>
+                                        <Frame Style="{StaticResource BadgeFrame}">
+                                            <Label Text="{Binding Category.Name}" Style="{StaticResource BadgeLabel}"/>
                                         </Frame>
-                                        <Label Text="{Binding Price, StringFormat='{0:N0} VNĐ'}" TextColor="#ef4444" FontAttributes="Bold" FontSize="14" VerticalOptions="Center"/>
-                                        <Label Text="{Binding Unit, StringFormat='/ {0}'}" TextColor="#64748b" FontSize="14" VerticalOptions="Center"/>
+                                        <Label Text="{Binding Price, StringFormat='{0:N0} VNĐ'}" 
+                                               Style="{StaticResource PriceLabel}" 
+                                               FontSize="14" VerticalOptions="Center"/>
+                                        <Label Text="{Binding Unit, StringFormat='/ {0}'}" 
+                                               Style="{StaticResource SubText}" 
+                                               FontSize="14" VerticalOptions="Center"/>
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
                             </Grid>

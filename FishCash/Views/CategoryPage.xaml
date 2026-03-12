@@ -4,24 +4,15 @@
              xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
              x:DataType="viewmodels:CategoryViewModel"
              x:Class="FishCash.Views.CategoryPage"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
     <Grid RowDefinitions="Auto, Auto, *" Padding="20">
-        <!-- Tiêu đề lớn sang trọng -->
-        <Label Text="Danh mục Hải sản" 
-               FontSize="32" 
-               FontAttributes="Bold"
-               TextColor="#1e293b"
-               Margin="0,0,0,20"/>
+        <!-- Page Header -->
+        <Label Text="🐟 Danh mục Hải sản" Style="{StaticResource PageHeader}"/>
 
         <!-- Form thêm mới -->
-        <Frame Grid.Row="1" 
-               HasShadow="True" 
-               CornerRadius="12" 
-               Padding="15" 
-               Margin="0,0,0,20"
-               BackgroundColor="White"
-               BorderColor="#e2e8f0">
+        <Frame Grid.Row="1" Style="{StaticResource CardFrame}" Margin="0,0,0,20">
             <Grid ColumnDefinitions="*, Auto" ColumnSpacing="15">
                 <Entry Grid.Column="0" 
                        Placeholder="Nhập tên danh mục mới..." 
@@ -31,11 +22,7 @@
                 <Button Grid.Column="1" 
                         Text="+ Thêm Danh mục" 
                         Command="{Binding AddCategoryCommand}"
-                        BackgroundColor="#2563eb"
-                        TextColor="White"
-                        CornerRadius="8"
-                        FontAttributes="Bold"
-                        Padding="20,10"/>
+                        Style="{StaticResource PrimaryButton}"/>
             </Grid>
         </Frame>
 
@@ -47,30 +34,30 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame HasShadow="False" 
-                               CornerRadius="10" 
-                               Padding="15"
-                               BorderColor="#e2e8f0"
-                               BackgroundColor="#f8fafc">
-                            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
-                                <Label Grid.Column="0" 
+                        <Frame Style="{StaticResource CardFrameFlat}">
+                            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="12" VerticalOptions="Center">
+                                <Frame Grid.Column="0" 
+                                       WidthRequest="44" HeightRequest="44" 
+                                       CornerRadius="22" 
+                                       Padding="0"
+                                       HasShadow="False"
+                                       BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark=#164e63}">
+                                    <Label Text="🐠" FontSize="20" 
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Frame>
+                                <Label Grid.Column="1" 
                                        Text="{Binding Name}" 
-                                       FontSize="18" 
-                                       FontAttributes="Bold"
-                                       TextColor="#334155"
+                                       Style="{StaticResource ProductName}"
                                        VerticalOptions="Center"/>
-                                <!-- Button Options can be added here -->
                             </Grid>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 
                 <CollectionView.EmptyView>
-                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                        <Label Text="Chưa có danh mục nào" 
-                               FontSize="18" 
-                               TextColor="Gray"
-                               HorizontalOptions="Center"/>
+                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
+                        <Label Text="🏝️" FontSize="48" HorizontalOptions="Center"/>
+                        <Label Text="Chưa có danh mục nào" Style="{StaticResource EmptyViewLabel}"/>
                     </StackLayout>
                 </CollectionView.EmptyView>
             </CollectionView>

@@ -5,21 +5,40 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:FishCash"
     xmlns:views="clr-namespace:FishCash.Views"
-    Title="FishCash">
+    Title="FishCash"
+    FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}"
+    FlyoutWidth="280">
 
-    <FlyoutItem Title="Máy tính tiền (POS)" Icon="dotnet_bot.png">
+    <!-- Flyout Header -->
+    <Shell.FlyoutHeader>
+        <Grid HeightRequest="120" 
+              BackgroundColor="{AppThemeBinding Light={StaticResource HeaderBg}, Dark={StaticResource HeaderBgDark}}"
+              Padding="20">
+            <VerticalStackLayout VerticalOptions="Center" Spacing="4">
+                <Label Text="🐟 FishCash" 
+                       FontSize="26" 
+                       FontAttributes="Bold" 
+                       TextColor="White"/>
+                <Label Text="Quản lý cửa hàng hải sản" 
+                       FontSize="13" 
+                       TextColor="#7dd3fc"/>
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <FlyoutItem Title="Máy tính tiền (POS)">
         <ShellContent
             ContentTemplate="{DataTemplate views:PosPage}"
             Route="PosPage" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Danh mục" Icon="dotnet_bot.png">
+    <FlyoutItem Title="Danh mục">
         <ShellContent
             ContentTemplate="{DataTemplate views:CategoryPage}"
             Route="CategoryPage" />
     </FlyoutItem>
     
-    <FlyoutItem Title="Sản phẩm" Icon="dotnet_bot.png">
+    <FlyoutItem Title="Sản phẩm">
         <ShellContent
             ContentTemplate="{DataTemplate views:ProductPage}"
             Route="ProductPage" />
