@@ -30,12 +30,14 @@ public static class MauiProgram
 		builder.Services.AddSingleton<FishCash.Services.PrintService>();
 
 		// ViewModels
+		builder.Services.AddTransient<FishCash.ViewModels.DashboardViewModel>();
 		builder.Services.AddTransient<FishCash.ViewModels.CategoryViewModel>();
 		builder.Services.AddTransient<FishCash.ViewModels.ProductViewModel>();
 		builder.Services.AddTransient<FishCash.ViewModels.PosViewModel>();
 		builder.Services.AddTransient<FishCash.ViewModels.CheckoutViewModel>();
 
 		// Views
+		builder.Services.AddTransient<FishCash.Views.DashboardPage>();
 		builder.Services.AddTransient<FishCash.Views.CategoryPage>();
 		builder.Services.AddTransient<FishCash.Views.ProductPage>();
 		builder.Services.AddTransient<FishCash.Views.PosPage>();

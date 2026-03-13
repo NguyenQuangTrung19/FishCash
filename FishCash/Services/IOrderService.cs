@@ -7,6 +7,11 @@ namespace FishCash.Services;
 /// </summary>
 public interface IOrderService
 {
-    Task<Order> CreateOrderAsync(List<OrderDetail> details, PaymentMethod paymentMethod);
-    Task<List<Order>> GetRecentOrdersAsync();
+    Task<Order> CreateOrderAsync(List<OrderDetail> orderDetails, PaymentMethod paymentMethod);
+    
+    // Thống kê Dashboard
+    Task<decimal> GetTotalRevenueAsync();
+    Task<int> GetTotalOrdersAsync();
+    Task<int> GetTotalProductsSoldAsync();
+    Task<List<Order>> GetRecentOrdersAsync(int count);
 }

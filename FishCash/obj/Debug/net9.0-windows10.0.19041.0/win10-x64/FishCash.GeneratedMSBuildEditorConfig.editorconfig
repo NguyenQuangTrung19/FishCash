@@ -75,6 +75,12 @@ build_metadata.AdditionalFiles.ManifestResourceName = FishCash.Views.CheckoutPag
 build_metadata.AdditionalFiles.TargetPath = Views\CheckoutPage.xaml
 build_metadata.AdditionalFiles.RelativePath = Views\CheckoutPage.xaml
 
+[C:/Users/ACER/Documents/Workspace/Projects/FishCash/FishCash/Views/DashboardPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = FishCash.Views.DashboardPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\DashboardPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\DashboardPage.xaml
+
 [C:/Users/ACER/Documents/Workspace/Projects/FishCash/FishCash/Views/PosPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = FishCash.Views.PosPage.xaml

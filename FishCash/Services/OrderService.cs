@@ -63,15 +63,55 @@ public class OrderService : IOrderService
             throw;
         }
     }
-    
-    public async Task<List<Order>> GetRecentOrdersAsync()
+    public async Task<decimal> GetTotalRevenueAsync()
+    {
+        try
+        {
+            return await _context.Orders
+                .Where(o => o.Status == OrderStatus.Completed)
+                .SumAsync(o => o.TotalAmount);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting total revenue");
+            return 0;
+        }
+    }
+
+    public async Task<int> GetTotalOrdersAsync()
+    {
+        try
+        {
+            return await _context.Orders.CountAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting total orders count");
+            return 0;
+        }
+    }
+
+    public async Task<int> GetTotalProductsSoldAsync()
+    {
+        try
+        {
+            return (int)await _context.OrderDetails.SumAsync(d => d.Quantity);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting total products sold");
+            return 0;
+        }
+    }
+
+    public async Task<List<Order>> GetRecentOrdersAsync(int count = 50)
     {
         try
         {
             return await _context.Orders
                 .Include(o => o.OrderDetails)
                 .OrderByDescending(o => o.OrderDate)
-                .Take(50)
+                .Take(count)
                 .ToListAsync();
         }
         catch (Exception ex)

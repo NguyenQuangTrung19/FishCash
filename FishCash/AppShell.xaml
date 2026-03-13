@@ -26,6 +26,12 @@
         </Grid>
     </Shell.FlyoutHeader>
 
+    <FlyoutItem Title="Tổng quan (Dashboard)">
+        <ShellContent
+            ContentTemplate="{DataTemplate views:DashboardPage}"
+            Route="DashboardPage" />
+    </FlyoutItem>
+
     <FlyoutItem Title="Máy tính tiền (POS)">
         <ShellContent
             ContentTemplate="{DataTemplate views:PosPage}"
