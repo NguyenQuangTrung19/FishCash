@@ -17,7 +17,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FishCash")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+d8849a197cf5dc89786a3a0420962292591c18cd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+7c3d00a86966854aa5de443c905705a27a5e65b8")]
 [assembly: System.Reflection.AssemblyProductAttribute("FishCash")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FishCash")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

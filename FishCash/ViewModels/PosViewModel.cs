@@ -13,9 +13,38 @@ public partial class PosViewModel : BaseViewModel
     public CartService CartService { get; }
 
     public ObservableCollection<Product> Products { get; } = new();
-    
-    // Binding property for TotalAmount to auto-update UI when cart changes
+    public ObservableCollection<string> DisplayUnitOptions { get; } = new() { "kg", "tấn" };
+    public ObservableCollection<string> EntryUnitOptions { get; } = new() { "kg", "tấn" };
+
     public decimal TotalAmount => CartService.GetTotalAmount();
+
+    // ═══ Display Unit ═══
+    [ObservableProperty]
+    private string displayUnit = "kg";
+
+    partial void OnDisplayUnitChanged(string value)
+    {
+        CartService.UpdateDisplayUnit(value);
+        OnPropertyChanged(nameof(TotalAmount));
+    }
+
+    // ═══ Quantity Input Modal ═══
+    [ObservableProperty]
+    private bool isQuantityModalVisible;
+
+    [ObservableProperty]
+    private Product? pendingProduct;
+
+    [ObservableProperty]
+    private string pendingQuantityText = string.Empty;
+
+    [ObservableProperty]
+    private string pendingUnit = "kg";
+
+    [ObservableProperty]
+    private bool isEditingCartItem;
+
+    private CartItem? _editingCartItem;
 
     public PosViewModel(IProductService productService, CartService cartService, IOrderService orderService)
     {
@@ -24,7 +53,6 @@ public partial class PosViewModel : BaseViewModel
         _orderService = orderService;
         Title = "Máy Tính Tiền";
 
-        // Listen to changes in CartService items to update TotalAmount
         CartService.Items.CollectionChanged += (s, e) => OnPropertyChanged(nameof(TotalAmount));
     }
 
@@ -32,33 +60,87 @@ public partial class PosViewModel : BaseViewModel
     public async Task LoadProductsAsync()
     {
         if (IsBusy) return;
-
         try
         {
             IsBusy = true;
             Products.Clear();
             var products = await _productService.GetProductsAsync();
             foreach (var product in products)
-            {
                 Products.Add(product);
-            }
         }
         catch (Exception ex)
         {
             await Shell.Current.DisplayAlert("Lỗi", $"Không thể tải sản phẩm: {ex.Message}", "OK");
         }
-        finally
-        {
-            IsBusy = false;
-        }
+        finally { IsBusy = false; }
     }
 
+    /// <summary>
+    /// Open quantity modal for adding a NEW product
+    /// </summary>
     [RelayCommand]
     public void AddToCart(Product product)
     {
         if (product == null) return;
-        CartService.AddToCart(product, 1);
+        PendingProduct = product;
+        PendingQuantityText = string.Empty;
+        PendingUnit = product.Unit;
+        IsEditingCartItem = false;
+        _editingCartItem = null;
+        IsQuantityModalVisible = true;
+    }
+
+    /// <summary>
+    /// Open quantity modal for EDITING an existing cart item
+    /// </summary>
+    [RelayCommand]
+    public void EditCartItem(CartItem cartItem)
+    {
+        if (cartItem == null) return;
+        PendingProduct = cartItem.Product;
+        PendingQuantityText = cartItem.EnteredQuantity.ToString("G");
+        PendingUnit = cartItem.EnteredUnit;
+        IsEditingCartItem = true;
+        _editingCartItem = cartItem;
+        IsQuantityModalVisible = true;
+    }
+
+    [RelayCommand]
+    public void CancelQuantityModal()
+    {
+        IsQuantityModalVisible = false;
+        PendingProduct = null;
+        _editingCartItem = null;
+    }
+
+    [RelayCommand]
+    public async Task ConfirmAddToCartAsync()
+    {
+        if (PendingProduct == null) return;
+
+        var cleanText = PendingQuantityText.Replace(",", ".");
+        if (!decimal.TryParse(cleanText, System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture, out decimal qty) || qty <= 0)
+        {
+            await Shell.Current.DisplayAlert("Lỗi", "Số lượng không hợp lệ. Vui lòng nhập số lớn hơn 0.", "OK");
+            return;
+        }
+
+        if (IsEditingCartItem && _editingCartItem != null)
+        {
+            _editingCartItem.EnteredQuantity = qty;
+            _editingCartItem.EnteredUnit = PendingUnit;
+            _editingCartItem.RefreshConversions();
+        }
+        else
+        {
+            CartService.AddToCart(PendingProduct, qty, PendingUnit);
+        }
+
         OnPropertyChanged(nameof(TotalAmount));
+        IsQuantityModalVisible = false;
+        PendingProduct = null;
+        _editingCartItem = null;
     }
 
     [RelayCommand]
@@ -96,9 +178,6 @@ public partial class PosViewModel : BaseViewModel
         {
             await Shell.Current.DisplayAlert("Lỗi", $"Lỗi thanh toán: {ex.Message}", "OK");
         }
-        finally
-        {
-            IsBusy = false;
-        }
+        finally { IsBusy = false; }
     }
 }

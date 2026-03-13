@@ -8,188 +8,288 @@
              Title="{Binding Title}"
              BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
-    <Grid RowDefinitions="Auto, Auto, *" Padding="24">
-        
-        <!-- ═══ Header + Toggle Button ═══ -->
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,16">
-            <VerticalStackLayout Grid.Column="0" Spacing="4">
-                <Label Text="🦐 Kho Hải sản" Style="{StaticResource PageHeader}"/>
-                <Label Text="Quản lý sản phẩm và giá bán" Style="{StaticResource SubText}" FontSize="13"/>
-            </VerticalStackLayout>
-            <Button Grid.Column="1" 
-                    Command="{Binding ToggleFormCommand}"
-                    Style="{StaticResource PrimaryButton}"
-                    VerticalOptions="Center"
-                    Padding="20,12"
-                    CornerRadius="12"
-                    FontSize="14">
-                <Button.Triggers>
-                    <DataTrigger TargetType="Button" Binding="{Binding IsFormVisible}" Value="False">
-                        <Setter Property="Text" Value="＋ Thêm sản phẩm"/>
-                    </DataTrigger>
-                    <DataTrigger TargetType="Button" Binding="{Binding IsFormVisible}" Value="True">
-                        <Setter Property="Text" Value="✕ Đóng"/>
-                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray600}}"/>
-                    </DataTrigger>
-                </Button.Triggers>
-            </Button>
+    <Grid>
+        <!-- ═══ Main Content Layer ═══ -->
+        <Grid RowDefinitions="Auto, *" Padding="24">
+            
+            <!-- Header + Add Button -->
+            <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,16">
+                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                    <Label Text="🦐 Kho Hải sản" Style="{StaticResource PageHeader}"/>
+                    <Label Text="Quản lý sản phẩm và giá bán" Style="{StaticResource SubText}" FontSize="13"/>
+                </VerticalStackLayout>
+                <Button Grid.Column="1" 
+                        Text="＋ Thêm sản phẩm"
+                        Command="{Binding ToggleFormCommand}"
+                        Style="{StaticResource PrimaryButton}"
+                        VerticalOptions="Center"
+                        Padding="20,12"
+                        CornerRadius="12"
+                        FontSize="14"/>
+            </Grid>
+
+            <!-- Product List -->
+            <RefreshView Grid.Row="1" Command="{Binding LoadDataCommand}" IsRefreshing="{Binding IsBusy}">
+                <CollectionView ItemsSource="{Binding Products}">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="3" VerticalItemSpacing="12" HorizontalItemSpacing="12"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Product">
+                            <Border Style="{StaticResource CardFrameFlat}" Padding="16">
+                                <Grid RowDefinitions="Auto, Auto, Auto" RowSpacing="6">
+                                    <!-- Category Badge + Actions -->
+                                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" ColumnSpacing="6">
+                                        <Border Grid.Column="0"
+                                                Style="{StaticResource BadgeBorder}"
+                                                HorizontalOptions="Start">
+                                            <Label Text="{Binding Category.Name}" Style="{StaticResource BadgeLabel}" FontSize="11"/>
+                                        </Border>
+                                        <Button Grid.Column="1"
+                                                Text="✏️"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductViewModel}}, Path=EditProductCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="Transparent"
+                                                FontSize="14"
+                                                WidthRequest="34" HeightRequest="34"
+                                                Padding="0"
+                                                ToolTipProperties.Text="Chỉnh sửa"/>
+                                        <Button Grid.Column="2"
+                                                Text="🗑️"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductViewModel}}, Path=DeleteProductCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="Transparent"
+                                                FontSize="14"
+                                                WidthRequest="34" HeightRequest="34"
+                                                Padding="0"
+                                                ToolTipProperties.Text="Xóa"/>
+                                    </Grid>
+                                    
+                                    <!-- Product Name -->
+                                    <Label Grid.Row="1" Text="{Binding Name}" Style="{StaticResource ProductName}" Margin="0,4,0,0"/>
+                                    
+                                    <!-- Price + Unit -->
+                                    <HorizontalStackLayout Grid.Row="2" Spacing="4" Margin="0,6,0,0">
+                                        <Label Text="{Binding Price, StringFormat='{0:N0} đ'}" 
+                                               Style="{StaticResource PriceLabel}" 
+                                               FontSize="15" VerticalOptions="Center"/>
+                                        <Label Text="{Binding Unit, StringFormat='/ {0}'}" 
+                                               Style="{StaticResource SubText}" 
+                                               FontSize="13" VerticalOptions="Center"/>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    
+                    <CollectionView.EmptyView>
+                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10" Padding="40">
+                            <Label Text="🦐" FontSize="48" HorizontalOptions="Center"/>
+                            <Label Text="Chưa có sản phẩm nào" Style="{StaticResource EmptyViewLabel}"/>
+                            <Label Text="Nhấn nút '＋ Thêm sản phẩm' để bắt đầu" 
+                                   Style="{StaticResource SubText}" HorizontalOptions="Center"/>
+                        </StackLayout>
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </RefreshView>
         </Grid>
 
-        <!-- ═══ Collapsible Add/Edit Product Form ═══ -->
-        <Border Grid.Row="1" 
-                Style="{StaticResource CardFrame}" 
-                Margin="0,0,0,20"
-                IsVisible="{Binding IsFormVisible}">
-            <VerticalStackLayout Spacing="18">
-                <!-- Form Title -->
-                <Label FontSize="16" FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
-                    <Label.Triggers>
-                        <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="False">
-                            <Setter Property="Text" Value="📝 Thêm sản phẩm mới"/>
-                        </DataTrigger>
-                        <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="True">
-                            <Setter Property="Text" Value="✏️ Chỉnh sửa sản phẩm"/>
-                        </DataTrigger>
-                    </Label.Triggers>
-                </Label>
+        <!-- ═══ Modal Overlay Layer ═══ -->
+        <Grid IsVisible="{Binding IsFormVisible}" 
+              InputTransparent="False"
+              ZIndex="100">
 
-                <!-- Row 1: Name + Price -->
-                <Grid ColumnDefinitions="*, *" ColumnSpacing="16">
-                    <VerticalStackLayout Grid.Column="0">
-                        <Label Text="Tên sản phẩm" Style="{StaticResource FormLabel}"/>
-                        <Border Style="{StaticResource InputBorder}">
-                            <Entry Placeholder="VD: Mực ống tươi..." 
+            <!-- Dark Backdrop (tap to close) -->
+            <BoxView Color="#80000000"
+                     InputTransparent="False">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleFormCommand}"/>
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <!-- Modal Sheet -->
+            <Border Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
+                    Padding="52"
+                    MinimumWidthRequest="700"
+                    MaximumWidthRequest="900"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Shadow="{OnPlatform Default={Shadow Brush=#30000000, Offset='0,12', Radius=40, Opacity=0.6}}">
+                <VerticalStackLayout Spacing="28">
+                    
+                    <!-- ── Header ── -->
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Border Grid.Column="0" 
+                                StrokeShape="RoundRectangle 14"
+                                StrokeThickness="0"
+                                BackgroundColor="{AppThemeBinding Light=#eef2ff, Dark=#312e81}"
+                                WidthRequest="52" HeightRequest="52"
+                                Padding="0">
+                            <Label FontSize="24" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="False">
+                                        <Setter Property="Text" Value="📦"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="True">
+                                        <Setter Property="Text" Value="✏️"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="16,0,0,0" VerticalOptions="Center">
+                            <Label FontSize="22" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="False">
+                                        <Setter Property="Text" Value="Thêm sản phẩm mới"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="True">
+                                        <Setter Property="Text" Value="Chỉnh sửa sản phẩm"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Label Text="Điền đầy đủ thông tin sản phẩm bên dưới" 
+                                   TextColor="{AppThemeBinding Light=#64748b, Dark=#94a3b8}" FontSize="13"/>
+                        </VerticalStackLayout>
+
+                        <Button Grid.Column="2"
+                                Text="✕"
+                                Command="{Binding ToggleFormCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
+                                TextColor="{AppThemeBinding Light=#94a3b8, Dark=#64748b}"
+                                FontSize="15"
+                                CornerRadius="22"
+                                WidthRequest="44" HeightRequest="44"
+                                Padding="0"
+                                VerticalOptions="Start"/>
+                    </Grid>
+
+                    <!-- Divider -->
+                    <BoxView HeightRequest="1" 
+                             Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+
+                    <!-- ── Row 1: Tên sản phẩm (full width) ── -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Tên sản phẩm" 
+                               FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
+                        <Border StrokeShape="RoundRectangle 12"
+                                Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
+                                StrokeThickness="1"
+                                BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                                HeightRequest="56" Padding="16,0">
+                            <Entry Placeholder="VD: Mực ống Phú Quốc loại 1..." 
                                    Text="{Binding NewProductName}" 
                                    IsSpellCheckEnabled="False"
                                    IsTextPredictionEnabled="False"
                                    BackgroundColor="Transparent"
-                                   FontSize="14"/>
+                                   FontSize="15"
+                                   VerticalOptions="Center"
+                                   PlaceholderColor="{AppThemeBinding Light=#94a3b8, Dark=#475569}"/>
                         </Border>
                     </VerticalStackLayout>
-                    
-                    <VerticalStackLayout Grid.Column="1">
-                        <Label Text="Giá bán (VNĐ)" Style="{StaticResource FormLabel}"/>
-                        <Border Style="{StaticResource InputBorder}">
-                            <Entry Placeholder="VD: 100.000" 
-                                   Keyboard="Numeric" 
-                                   Text="{Binding NewProductPriceText}" 
-                                   BackgroundColor="Transparent"
-                                   FontSize="14"/>
-                        </Border>
-                    </VerticalStackLayout>
-                </Grid>
 
-                <!-- Row 2: Category + Unit + Submit -->
-                <Grid ColumnDefinitions="2*, *, Auto" ColumnSpacing="16">
-                    <VerticalStackLayout Grid.Column="0">
-                        <Label Text="Danh mục" Style="{StaticResource FormLabel}"/>
-                        <Border Style="{StaticResource InputBorder}">
+                    <!-- ── Row 2: Danh mục (full width) ── -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Danh mục" 
+                               FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
+                        <Border StrokeShape="RoundRectangle 12"
+                                Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
+                                StrokeThickness="1"
+                                BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                                MinimumHeightRequest="56" Padding="16,8">
                             <Picker ItemsSource="{Binding Categories}" 
                                     ItemDisplayBinding="{Binding Name}" 
                                     SelectedItem="{Binding SelectedCategory}" 
-                                    Title="Chọn danh mục"
+                                    Title="Chọn danh mục..."
                                     BackgroundColor="Transparent"
-                                    FontSize="14"/>
+                                    FontSize="15"
+                                    HorizontalOptions="Fill"
+                                    VerticalOptions="Center"/>
                         </Border>
                     </VerticalStackLayout>
 
-                    <VerticalStackLayout Grid.Column="1">
-                        <Label Text="Đơn vị" Style="{StaticResource FormLabel}"/>
-                        <Border Style="{StaticResource InputBorder}">
-                            <Picker ItemsSource="{Binding UnitOptions}" 
-                                    SelectedItem="{Binding NewProductUnit}"
-                                    BackgroundColor="Transparent"
-                                    FontSize="14"/>
-                        </Border>
-                    </VerticalStackLayout>
+                    <!-- ── Row 3: Giá bán + Đơn vị ── -->
+                    <Grid ColumnDefinitions="3*, *" ColumnSpacing="20">
+                        <VerticalStackLayout Grid.Column="0" Spacing="8">
+                            <Label Text="Giá bán (VNĐ)" 
+                                   FontSize="13" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
+                            <Border StrokeShape="RoundRectangle 12"
+                                    Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
+                                    StrokeThickness="1"
+                                    BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                                    HeightRequest="56" Padding="16,0">
+                                <Entry Placeholder="VD: 100.000" 
+                                       Keyboard="Numeric" 
+                                       Text="{Binding NewProductPriceText}" 
+                                       BackgroundColor="Transparent"
+                                       FontSize="15"
+                                       VerticalOptions="Center"
+                                       PlaceholderColor="{AppThemeBinding Light=#94a3b8, Dark=#475569}"/>
+                            </Border>
+                        </VerticalStackLayout>
 
-                    <Button Grid.Column="2" 
-                            Command="{Binding AddProductCommand}"
-                            Style="{StaticResource SuccessButton}"
-                            VerticalOptions="End"
-                            Padding="24,0"
-                            CornerRadius="12"
-                            HeightRequest="48"
-                            FontSize="15">
-                        <Button.Triggers>
-                            <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="False">
-                                <Setter Property="Text" Value="💾 Nhập kho"/>
-                            </DataTrigger>
-                            <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="True">
-                                <Setter Property="Text" Value="💾 Cập nhật"/>
-                            </DataTrigger>
-                        </Button.Triggers>
-                    </Button>
-                </Grid>
-            </VerticalStackLayout>
-        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="8">
+                            <Label Text="Đơn vị" 
+                                   FontSize="13" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
+                            <Border StrokeShape="RoundRectangle 12"
+                                    Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
+                                    StrokeThickness="1"
+                                    BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                                    MinimumHeightRequest="56" Padding="16,8">
+                                <Picker ItemsSource="{Binding UnitOptions}" 
+                                        SelectedItem="{Binding NewProductUnit}"
+                                        BackgroundColor="Transparent"
+                                        FontSize="15"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Center"/>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Grid>
 
-        <!-- ═══ Product List ═══ -->
-        <RefreshView Grid.Row="2" Command="{Binding LoadDataCommand}" IsRefreshing="{Binding IsBusy}">
-            <CollectionView ItemsSource="{Binding Products}">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="3" VerticalItemSpacing="12" HorizontalItemSpacing="12"/>
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Product">
-                        <Border Style="{StaticResource CardFrameFlat}" Padding="16">
-                            <Grid RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="6">
-                                <!-- Category Badge + Action Buttons -->
-                                <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" ColumnSpacing="6">
-                                    <Border Grid.Column="0"
-                                            Style="{StaticResource BadgeBorder}"
-                                            HorizontalOptions="Start">
-                                        <Label Text="{Binding Category.Name}" Style="{StaticResource BadgeLabel}" FontSize="11"/>
-                                    </Border>
-                                    <!-- Edit Button -->
-                                    <Button Grid.Column="1"
-                                            Text="✏️"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductViewModel}}, Path=EditProductCommand}"
-                                            CommandParameter="{Binding .}"
-                                            BackgroundColor="Transparent"
-                                            FontSize="14"
-                                            WidthRequest="34" HeightRequest="34"
-                                            Padding="0"
-                                            ToolTipProperties.Text="Chỉnh sửa"/>
-                                    <!-- Delete Button -->
-                                    <Button Grid.Column="2"
-                                            Text="🗑️"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductViewModel}}, Path=DeleteProductCommand}"
-                                            CommandParameter="{Binding .}"
-                                            BackgroundColor="Transparent"
-                                            FontSize="14"
-                                            WidthRequest="34" HeightRequest="34"
-                                            Padding="0"
-                                            ToolTipProperties.Text="Xóa"/>
-                                </Grid>
-                                
-                                <!-- Product Name -->
-                                <Label Grid.Row="1" Text="{Binding Name}" Style="{StaticResource ProductName}" Margin="0,4,0,0"/>
-                                
-                                <!-- Price + Unit -->
-                                <HorizontalStackLayout Grid.Row="2" Spacing="4" Margin="0,6,0,0">
-                                    <Label Text="{Binding Price, StringFormat='{0:N0} đ'}" 
-                                           Style="{StaticResource PriceLabel}" 
-                                           FontSize="15" VerticalOptions="Center"/>
-                                    <Label Text="{Binding Unit, StringFormat='/ {0}'}" 
-                                           Style="{StaticResource SubText}" 
-                                           FontSize="13" VerticalOptions="Center"/>
-                                </HorizontalStackLayout>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-                
-                <CollectionView.EmptyView>
-                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10" Padding="40">
-                        <Label Text="🦐" FontSize="48" HorizontalOptions="Center"/>
-                        <Label Text="Chưa có sản phẩm nào" Style="{StaticResource EmptyViewLabel}"/>
-                        <Label Text="Nhấn nút '＋ Thêm sản phẩm' để bắt đầu" 
-                               Style="{StaticResource SubText}" HorizontalOptions="Center"/>
-                    </StackLayout>
-                </CollectionView.EmptyView>
-            </CollectionView>
-        </RefreshView>
+                    <!-- Divider -->
+                    <BoxView HeightRequest="1" 
+                             Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"
+                             Margin="0,4,0,0"/>
+
+                    <!-- ── Action Buttons ── -->
+                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12">
+                        <Button Grid.Column="0"
+                                Text="Hủy bỏ"
+                                Command="{Binding ToggleFormCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
+                                TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"
+                                CornerRadius="14"
+                                HeightRequest="52"
+                                Padding="32,0"
+                                FontSize="15"/>
+                        <Button Grid.Column="2"
+                                Command="{Binding AddProductCommand}"
+                                Style="{StaticResource SuccessButton}"
+                                CornerRadius="14"
+                                HeightRequest="52"
+                                Padding="36,0"
+                                FontSize="15"
+                                FontAttributes="Bold">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="False">
+                                    <Setter Property="Text" Value="💾 Nhập kho"/>
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Text" Value="💾 Cập nhật"/>
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>

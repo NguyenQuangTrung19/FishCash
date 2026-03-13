@@ -25,6 +25,13 @@ public partial class DashboardViewModel : BaseViewModel
 
     public ObservableCollection<Order> RecentOrders { get; } = new();
 
+    // ═══ Order Detail Modal ═══
+    [ObservableProperty]
+    private bool isOrderDetailVisible;
+
+    [ObservableProperty]
+    private Order? selectedOrder;
+
     public DashboardViewModel(IOrderService orderService)
     {
         _orderService = orderService;
@@ -63,11 +70,25 @@ public partial class DashboardViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    public void ViewOrderDetail(Order order)
+    {
+        if (order == null) return;
+        SelectedOrder = order;
+        IsOrderDetailVisible = true;
+    }
+
+    [RelayCommand]
+    public void CloseOrderDetail()
+    {
+        IsOrderDetailVisible = false;
+        SelectedOrder = null;
+    }
+
+    [RelayCommand]
     public async Task NavigateToAsync(string routeName)
     {
         if (string.IsNullOrWhiteSpace(routeName)) return;
 
-        // Routing in Shell requires '//' for flyout items to reset the navigation stack securely
         if (!routeName.StartsWith("//"))
         {
             routeName = $"//{routeName}";

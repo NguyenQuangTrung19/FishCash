@@ -110,6 +110,7 @@ public class OrderService : IOrderService
         {
             return await _context.Orders
                 .Include(o => o.OrderDetails)
+                    .ThenInclude(d => d.Product)
                 .OrderByDescending(o => o.OrderDate)
                 .Take(count)
                 .ToListAsync();

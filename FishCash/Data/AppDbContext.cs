@@ -9,15 +9,21 @@ namespace FishCash.Data;
 /// </summary>
 public class AppDbContext : DbContext
 {
+    // Original tables
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderDetail> OrderDetails { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
 
+    // Broker trading tables
+    public DbSet<Partner> Partners { get; set; }
+    public DbSet<TradingSession> TradingSessions { get; set; }
+    public DbSet<TradeOrder> TradeOrders { get; set; }
+    public DbSet<TradeOrderDetail> TradeOrderDetails { get; set; }
+
     public AppDbContext()
     {
-        // For EF Core Tools if needed, otherwise initialized via Dependency Injection
     }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -37,7 +43,7 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Relationships
+        // ═══ Original relationships ═══
         modelBuilder.Entity<Category>()
             .HasMany(c => c.Products)
             .WithOne(p => p.Category)
@@ -58,7 +64,28 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(od => od.ProductId);
 
-        // Enum conversions - store as string for backward compatibility
+        // ═══ Broker trading relationships ═══
+        modelBuilder.Entity<TradingSession>()
+            .HasMany(ts => ts.TradeOrders)
+            .WithOne(to => to.TradingSession)
+            .HasForeignKey(to => to.TradingSessionId);
+
+        modelBuilder.Entity<Partner>()
+            .HasMany(p => p.TradeOrders)
+            .WithOne(to => to.Partner)
+            .HasForeignKey(to => to.PartnerId);
+
+        modelBuilder.Entity<TradeOrder>()
+            .HasMany(to => to.Details)
+            .WithOne(d => d.TradeOrder)
+            .HasForeignKey(d => d.TradeOrderId);
+
+        modelBuilder.Entity<TradeOrderDetail>()
+            .HasOne(d => d.Product)
+            .WithMany()
+            .HasForeignKey(d => d.ProductId);
+
+        // ═══ Enum conversions ═══
         modelBuilder.Entity<Order>()
             .Property(o => o.PaymentMethod)
             .HasConversion<string>();
@@ -71,7 +98,19 @@ public class AppDbContext : DbContext
             .Property(t => t.TransactionType)
             .HasConversion<string>();
 
-        // Decimal precision for currency fields
+        modelBuilder.Entity<Partner>()
+            .Property(p => p.PartnerType)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<TradeOrder>()
+            .Property(o => o.OrderType)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<TradingSession>()
+            .Property(s => s.Status)
+            .HasConversion<string>();
+
+        // ═══ Decimal precision ═══
         modelBuilder.Entity<Product>()
             .Property(p => p.Price)
             .HasPrecision(18, 2);
@@ -90,5 +129,22 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Transaction>()
             .Property(t => t.Amount)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<TradingSession>(entity =>
+        {
+            entity.Property(s => s.TotalPurchase).HasPrecision(18, 2);
+            entity.Property(s => s.TotalSales).HasPrecision(18, 2);
+        });
+
+        modelBuilder.Entity<TradeOrder>()
+            .Property(o => o.TotalAmount)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<TradeOrderDetail>(entity =>
+        {
+            entity.Property(d => d.Quantity).HasPrecision(18, 3);
+            entity.Property(d => d.UnitPrice).HasPrecision(18, 2);
+            entity.Property(d => d.SubTotal).HasPrecision(18, 2);
+        });
     }
 }

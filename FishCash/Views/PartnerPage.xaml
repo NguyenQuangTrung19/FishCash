@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
+             xmlns:models="clr-namespace:FishCash.Models"
+             x:DataType="viewmodels:PartnerViewModel"
+             x:Class="FishCash.Views.PartnerPage"
+             Title="{Binding Title}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
+
+    <Grid>
+        <Grid RowDefinitions="Auto, *" Padding="24">
+            <!-- Header -->
+            <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,16">
+                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                    <Label Text="🤝 Đối tác kinh doanh" Style="{StaticResource PageHeader}"/>
+                    <Label Text="Nhà cung cấp &amp; Khách mua" Style="{StaticResource SubText}" FontSize="13"/>
+                </VerticalStackLayout>
+                <Button Grid.Column="1" 
+                        Text="＋ Thêm đối tác"
+                        Command="{Binding ToggleFormCommand}"
+                        Style="{StaticResource PrimaryButton}"
+                        VerticalOptions="Center"
+                        Padding="20,12" CornerRadius="12" FontSize="14"/>
+            </Grid>
+
+            <!-- Partner List -->
+            <RefreshView Grid.Row="1" Command="{Binding LoadPartnersCommand}" IsRefreshing="{Binding IsBusy}">
+                <CollectionView ItemsSource="{Binding Partners}">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Partner">
+                            <Border Style="{StaticResource CardFrameFlat}">
+                                <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="14" VerticalOptions="Center">
+                                    <Border Grid.Column="0" Style="{StaticResource IconCircle}"
+                                            BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark=#164e63}">
+                                        <Label FontSize="20" HorizontalOptions="Center" VerticalOptions="Center">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding PartnerType}" Value="Supplier">
+                                                    <Setter Property="Text" Value="🚢"/>
+                                                </DataTrigger>
+                                                <DataTrigger TargetType="Label" Binding="{Binding PartnerType}" Value="Buyer">
+                                                    <Setter Property="Text" Value="🏪"/>
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                    </Border>
+
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                        <Label Text="{Binding Name}" Style="{StaticResource ProductName}"/>
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Border StrokeShape="RoundRectangle 6" StrokeThickness="0" Padding="6,2"
+                                                    BackgroundColor="{AppThemeBinding Light=#dbeafe, Dark=#1e3a5f}">
+                                                <Label FontSize="11" TextColor="{AppThemeBinding Light=#1d4ed8, Dark=#93c5fd}">
+                                                    <Label.Triggers>
+                                                        <DataTrigger TargetType="Label" Binding="{Binding PartnerType}" Value="Supplier">
+                                                            <Setter Property="Text" Value="Nhà cung cấp"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger TargetType="Label" Binding="{Binding PartnerType}" Value="Buyer">
+                                                            <Setter Property="Text" Value="Khách mua"/>
+                                                        </DataTrigger>
+                                                    </Label.Triggers>
+                                                </Label>
+                                            </Border>
+                                            <Label Text="{Binding Phone}" Style="{StaticResource SubText}" FontSize="12"
+                                                   VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+
+                                    <Button Grid.Column="2" Text="✏️"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PartnerViewModel}}, Path=EditPartnerCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Transparent" FontSize="16"
+                                            WidthRequest="40" HeightRequest="40" Padding="0"/>
+                                    <Button Grid.Column="3" Text="🗑️"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PartnerViewModel}}, Path=DeletePartnerCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Transparent" FontSize="16"
+                                            WidthRequest="40" HeightRequest="40" Padding="0"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10" Padding="40">
+                            <Label Text="🤝" FontSize="48" HorizontalOptions="Center"/>
+                            <Label Text="Chưa có đối tác nào" Style="{StaticResource EmptyViewLabel}"/>
+                            <Label Text="Nhấn '＋ Thêm đối tác' để bắt đầu" Style="{StaticResource SubText}" HorizontalOptions="Center"/>
+                        </StackLayout>
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+
+        <!-- ═══ Add/Edit Partner Modal ═══ -->
+        <Grid IsVisible="{Binding IsFormVisible}" InputTransparent="False" ZIndex="100">
+            <BoxView Color="#80000000" InputTransparent="False">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleFormCommand}"/>
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <Border Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#334155}" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
+                    Padding="48" MinimumWidthRequest="600" MaximumWidthRequest="750"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    Shadow="{OnPlatform Default={Shadow Brush=#30000000, Offset='0,12', Radius=40, Opacity=0.6}}">
+                <VerticalStackLayout Spacing="24">
+                    <!-- Header -->
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Border Grid.Column="0" StrokeShape="RoundRectangle 14" StrokeThickness="0"
+                                BackgroundColor="{AppThemeBinding Light=#dbeafe, Dark=#1e3a5f}"
+                                WidthRequest="48" HeightRequest="48" Padding="0">
+                            <Label Text="🤝" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="14,0,0,0" VerticalOptions="Center">
+                            <Label FontSize="20" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="False">
+                                        <Setter Property="Text" Value="Thêm đối tác mới"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="True">
+                                        <Setter Property="Text" Value="Chỉnh sửa đối tác"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Label Text="Điền thông tin đối tác" TextColor="{AppThemeBinding Light=#64748b, Dark=#94a3b8}" FontSize="13"/>
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="✕" Command="{Binding ToggleFormCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
+                                TextColor="{AppThemeBinding Light=#94a3b8, Dark=#64748b}"
+                                FontSize="15" CornerRadius="22" WidthRequest="40" HeightRequest="40" Padding="0"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+
+                    <!-- Name -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Tên đối tác *" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
+                        <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
+                                StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                                HeightRequest="56" Padding="16,0">
+                            <Entry Placeholder="VD: Bà 7, Tàu Phú Quý,..." Text="{Binding NewPartnerName}"
+                                   IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
+                                   BackgroundColor="Transparent" FontSize="15" VerticalOptions="Center"/>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Type + Phone -->
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="16">
+                        <VerticalStackLayout Grid.Column="0" Spacing="8">
+                            <Label Text="Loại đối tác" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
+                            <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
+                                    StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                                    MinimumHeightRequest="56" Padding="16,8">
+                                <Picker ItemsSource="{Binding PartnerTypeOptions}" SelectedItem="{Binding SelectedPartnerTypeText}"
+                                        FontSize="15" BackgroundColor="Transparent" HorizontalOptions="Fill" VerticalOptions="Center"/>
+                            </Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="8">
+                            <Label Text="Số điện thoại" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
+                            <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
+                                    StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                                    HeightRequest="56" Padding="16,0">
+                                <Entry Placeholder="0909..." Text="{Binding NewPartnerPhone}" Keyboard="Telephone"
+                                       BackgroundColor="Transparent" FontSize="15" VerticalOptions="Center"/>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <!-- Address -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Địa chỉ" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
+                        <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
+                                StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                                HeightRequest="56" Padding="16,0">
+                            <Entry Placeholder="Địa chỉ (tùy chọn)" Text="{Binding NewPartnerAddress}"
+                                   IsSpellCheckEnabled="False" BackgroundColor="Transparent" FontSize="15" VerticalOptions="Center"/>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}" Margin="0,4,0,0"/>
+
+                    <!-- Buttons -->
+                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12">
+                        <Button Grid.Column="0" Text="Hủy bỏ" Command="{Binding ToggleFormCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
+                                TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"
+                                CornerRadius="14" HeightRequest="52" Padding="32,0" FontSize="15"/>
+                        <Button Grid.Column="2" Command="{Binding SavePartnerCommand}"
+                                Style="{StaticResource SuccessButton}" CornerRadius="14" HeightRequest="52"
+                                Padding="36,0" FontSize="15" FontAttributes="Bold">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="False">
+                                    <Setter Property="Text" Value="💾 Lưu đối tác"/>
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Text" Value="💾 Cập nhật"/>
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>
