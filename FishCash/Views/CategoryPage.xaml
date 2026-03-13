@@ -2,66 +2,169 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
+             xmlns:models="clr-namespace:FishCash.Models"
              x:DataType="viewmodels:CategoryViewModel"
              x:Class="FishCash.Views.CategoryPage"
              Title="{Binding Title}"
              BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
-    <Grid RowDefinitions="Auto, Auto, *" Padding="20">
-        <!-- Page Header -->
-        <Label Text="🐟 Danh mục Hải sản" Style="{StaticResource PageHeader}"/>
+    <Grid RowDefinitions="Auto, Auto, *" Padding="24">
+        
+        <!-- ═══ Header + Toggle Button ═══ -->
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,16">
+            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                <Label Text="📁 Danh mục Hải sản" Style="{StaticResource PageHeader}"/>
+                <Label Text="Quản lý các nhóm sản phẩm" Style="{StaticResource SubText}" FontSize="13"/>
+            </VerticalStackLayout>
+            <Button Grid.Column="1" 
+                    Command="{Binding ToggleFormCommand}"
+                    Style="{StaticResource PrimaryButton}"
+                    VerticalOptions="Center"
+                    Padding="20,12"
+                    CornerRadius="12"
+                    FontSize="14">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsFormVisible}" Value="False">
+                        <Setter Property="Text" Value="＋ Thêm danh mục"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsFormVisible}" Value="True">
+                        <Setter Property="Text" Value="✕ Đóng"/>
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray600}}"/>
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </Grid>
 
-        <!-- Form thêm mới -->
-        <Frame Grid.Row="1" Style="{StaticResource CardFrame}" Margin="0,0,0,20">
-            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="15">
-                <Entry Grid.Column="0" 
-                       Placeholder="Nhập tên danh mục mới..." 
-                       Text="{Binding NewCategoryName}"
-                       FontSize="16"
-                       VerticalOptions="Center"/>
-                <Button Grid.Column="1" 
-                        Text="+ Thêm Danh mục" 
-                        Command="{Binding AddCategoryCommand}"
-                        Style="{StaticResource PrimaryButton}"/>
-            </Grid>
-        </Frame>
+        <!-- ═══ Collapsible Add/Edit Category Form ═══ -->
+        <Border Grid.Row="1" 
+                Style="{StaticResource CardFrame}" 
+                Margin="0,0,0,20"
+                IsVisible="{Binding IsFormVisible}">
+            <VerticalStackLayout Spacing="16">
+                <!-- Form Title -->
+                <Label FontSize="16" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="False">
+                            <Setter Property="Text" Value="📝 Thêm danh mục mới"/>
+                        </DataTrigger>
+                        <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="True">
+                            <Setter Property="Text" Value="✏️ Chỉnh sửa danh mục"/>
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
 
-        <!-- Danh sách -->
+                <!-- Form Fields -->
+                <Grid ColumnDefinitions="*, *, Auto" ColumnSpacing="16">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Tên danh mục" Style="{StaticResource FormLabel}"/>
+                        <Border Style="{StaticResource InputBorder}">
+                            <Entry Placeholder="VD: Cá, Tôm, Mực..." 
+                                   Text="{Binding NewCategoryName}"
+                                   IsSpellCheckEnabled="False"
+                                   IsTextPredictionEnabled="False"
+                                   FontSize="14"
+                                   BackgroundColor="Transparent"/>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Mô tả (tùy chọn)" Style="{StaticResource FormLabel}"/>
+                        <Border Style="{StaticResource InputBorder}">
+                            <Entry Placeholder="Mô tả ngắn gọn..." 
+                                   Text="{Binding NewCategoryDescription}"
+                                   IsSpellCheckEnabled="False"
+                                   IsTextPredictionEnabled="False"
+                                   FontSize="14"
+                                   BackgroundColor="Transparent"/>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <Button Grid.Column="2" 
+                            Command="{Binding AddCategoryCommand}"
+                            Style="{StaticResource SuccessButton}"
+                            VerticalOptions="End"
+                            Padding="24,0"
+                            CornerRadius="12"
+                            HeightRequest="48"
+                            FontSize="15">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="False">
+                                <Setter Property="Text" Value="💾 Lưu"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="True">
+                                <Setter Property="Text" Value="💾 Cập nhật"/>
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- ═══ Category List ═══ -->
         <RefreshView Grid.Row="2" Command="{Binding LoadCategoriesCommand}" IsRefreshing="{Binding IsBusy}">
             <CollectionView ItemsSource="{Binding Categories}">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Style="{StaticResource CardFrameFlat}">
-                            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="12" VerticalOptions="Center">
-                                <Frame Grid.Column="0" 
-                                       WidthRequest="44" HeightRequest="44" 
-                                       CornerRadius="22" 
-                                       Padding="0"
-                                       HasShadow="False"
-                                       BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark=#164e63}">
+                    <DataTemplate x:DataType="models:Category">
+                        <Border Style="{StaticResource CardFrameFlat}">
+                            <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="14" VerticalOptions="Center">
+                                <!-- Icon -->
+                                <Border Grid.Column="0" 
+                                        Style="{StaticResource IconCircle}"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark=#164e63}">
                                     <Label Text="🐠" FontSize="20" 
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
-                                </Frame>
-                                <Label Grid.Column="1" 
-                                       Text="{Binding Name}" 
-                                       Style="{StaticResource ProductName}"
-                                       VerticalOptions="Center"/>
+                                </Border>
+                                
+                                <!-- Name + Description -->
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                    <Label Text="{Binding Name}" 
+                                           Style="{StaticResource ProductName}"
+                                           VerticalOptions="Center"/>
+                                    <Label Text="{Binding Description}" 
+                                           Style="{StaticResource SubText}"
+                                           IsVisible="{Binding Description, Converter={x:Null}}"
+                                           FontSize="12"/>
+                                </VerticalStackLayout>
+
+                                <!-- Edit Button -->
+                                <Button Grid.Column="2"
+                                        Text="✏️"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CategoryViewModel}}, Path=EditCategoryCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="Transparent"
+                                        FontSize="16"
+                                        WidthRequest="40" HeightRequest="40"
+                                        Padding="0"
+                                        ToolTipProperties.Text="Chỉnh sửa"/>
+
+                                <!-- Delete Button -->
+                                <Button Grid.Column="3"
+                                        Text="🗑️"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CategoryViewModel}}, Path=DeleteCategoryCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="Transparent"
+                                        FontSize="16"
+                                        WidthRequest="40" HeightRequest="40"
+                                        Padding="0"
+                                        ToolTipProperties.Text="Xóa"/>
                             </Grid>
-                        </Frame>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 
                 <CollectionView.EmptyView>
-                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
+                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10" Padding="40">
                         <Label Text="🏝️" FontSize="48" HorizontalOptions="Center"/>
                         <Label Text="Chưa có danh mục nào" Style="{StaticResource EmptyViewLabel}"/>
+                        <Label Text="Nhấn nút '＋ Thêm danh mục' để bắt đầu" 
+                               Style="{StaticResource SubText}" HorizontalOptions="Center"/>
                     </StackLayout>
                 </CollectionView.EmptyView>
             </CollectionView>
         </RefreshView>
     </Grid>
-
 </ContentPage>

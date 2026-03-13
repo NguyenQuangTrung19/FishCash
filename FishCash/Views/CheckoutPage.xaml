@@ -8,45 +8,74 @@
              BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20" HorizontalOptions="Center" MaximumWidthRequest="500">
+        <VerticalStackLayout Padding="24" Spacing="24" HorizontalOptions="Center" MaximumWidthRequest="480">
             
-            <Frame Style="{StaticResource CardFrame}" Padding="30">
-                <VerticalStackLayout Spacing="15" HorizontalOptions="Center">
+            <!-- Success Card -->
+            <Border Style="{StaticResource CardFrame}" Padding="36">
+                <VerticalStackLayout Spacing="20" HorizontalOptions="Center">
                     
-                    <Label Text="✅ Thanh Toán Thành Công!" Style="{StaticResource SuccessTitle}"/>
+                    <!-- Success Icon Circle -->
+                    <Border StrokeShape="RoundRectangle 40"
+                            StrokeThickness="0"
+                            WidthRequest="80" HeightRequest="80"
+                            HorizontalOptions="Center"
+                            Padding="0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#10b981" Offset="0.0" />
+                                <GradientStop Color="#34d399" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Label Text="✓" TextColor="White" FontSize="36" FontAttributes="Bold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    
+                    <Label Text="Thanh Toán Thành Công!" Style="{StaticResource SuccessTitle}" FontSize="24"/>
                            
                     <Label Text="{Binding CurrentOrder.TotalAmount, StringFormat='Tổng: {0:N0} VNĐ'}" 
                            Style="{StaticResource PriceLabelLarge}"
-                           HorizontalOptions="Center"/>
+                           HorizontalOptions="Center"
+                           FontSize="28"/>
 
-                    <BoxView Style="{StaticResource Divider}"/>
+                    <BoxView Style="{StaticResource Divider}" Margin="0,4"/>
 
                     <Label Text="Quét mã QR để thanh toán" 
-                           FontSize="16" 
+                           FontSize="15" 
                            TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}" 
                            HorizontalOptions="Center"/>
 
-                    <Frame Padding="10" 
-                           BorderColor="{AppThemeBinding Light={StaticResource CardBorder}, Dark={StaticResource CardBorderDark}}" 
-                           CornerRadius="10" HasShadow="False" HorizontalOptions="Center">
+                    <!-- QR Code Frame -->
+                    <Border StrokeShape="RoundRectangle 14"
+                            Stroke="{AppThemeBinding Light={StaticResource CardBorder}, Dark={StaticResource CardBorderDark}}"
+                            StrokeThickness="2"
+                            Padding="12"
+                            HorizontalOptions="Center"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1e293b}">
+                        <Border.Shadow>
+                            <Shadow Brush="#20000000" Offset="0,4" Radius="16" Opacity="0.4"/>
+                        </Border.Shadow>
                         <Image Source="{Binding QrCodeUrl}" 
-                               WidthRequest="250" 
-                               HeightRequest="250"
+                               WidthRequest="220" 
+                               HeightRequest="220"
                                Aspect="AspectFit"/>
-                    </Frame>
+                    </Border>
 
-                    <Button Text="🖨️ In Hóa Đơn &amp; Lưu" 
-                            Command="{Binding PrintInvoiceCommand}"
-                            Style="{StaticResource InfoButton}"
-                            Margin="0,20,0,0"
-                            Padding="15"/>
-                            
-                    <Button Text="Hoàn tất &amp; Đóng" 
-                            Command="{Binding DoneCommand}"
-                            Style="{StaticResource SecondaryButton}"
-                            Padding="15"/>
+                    <!-- Action Buttons -->
+                    <VerticalStackLayout Spacing="12" Margin="0,10,0,0">
+                        <Button Text="🖨️ In Hóa Đơn &amp; Lưu" 
+                                Command="{Binding PrintInvoiceCommand}"
+                                Style="{StaticResource InfoButton}"
+                                Padding="20,14"
+                                CornerRadius="12"/>
+                                
+                        <Button Text="Hoàn tất &amp; Đóng" 
+                                Command="{Binding DoneCommand}"
+                                Style="{StaticResource SecondaryButton}"
+                                Padding="20,14"
+                                CornerRadius="12"/>
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
             
         </VerticalStackLayout>
     </ScrollView>

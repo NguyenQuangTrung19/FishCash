@@ -2,110 +2,163 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
+             xmlns:models="clr-namespace:FishCash.Models"
              x:DataType="viewmodels:PosViewModel"
              x:Class="FishCash.Views.PosPage"
              Title="{Binding Title}"
              BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
-    <Grid ColumnDefinitions="2*, 1*" ColumnSpacing="10" Padding="15">
+    <Grid ColumnDefinitions="2*, 1*" ColumnSpacing="0" Padding="0">
         
-        <!-- Cột trái: Danh sách Sản phẩm -->
-        <Grid Grid.Column="0" RowDefinitions="Auto, *">
-            <Label Grid.Row="0" Text="🐟 Mặt hàng" Style="{StaticResource PageHeader}" FontSize="26"/>
+        <!-- ═══ Left: Product Catalog ═══ -->
+        <Grid Grid.Column="0" RowDefinitions="Auto, *" Padding="20">
+            <VerticalStackLayout Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+                <Label Text="🐟 Mặt hàng" Style="{StaticResource PageHeader}"/>
+                <Label Text="Chọn sản phẩm để thêm vào giỏ" Style="{StaticResource SubText}" FontSize="13"/>
+            </VerticalStackLayout>
             
             <RefreshView Grid.Row="1" Command="{Binding LoadProductsCommand}" IsRefreshing="{Binding IsBusy}">
                 <CollectionView ItemsSource="{Binding Products}">
                     <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="10" HorizontalItemSpacing="10"/>
+                        <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="12" HorizontalItemSpacing="12"/>
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Frame Style="{StaticResource CardFrame}" Padding="15">
-                                <Grid RowDefinitions="Auto, Auto, Auto">
-                                    <Label Grid.Row="0" Text="{Binding Name}" Style="{StaticResource ProductName}"/>
-                                    <Label Grid.Row="1" Text="{Binding Category.Name}" Style="{StaticResource SubText}" Margin="0,5,0,0"/>
+                        <DataTemplate x:DataType="models:Product">
+                            <Border Style="{StaticResource CardFrame}" Padding="16">
+                                <Grid RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="4">
+                                    <!-- Category Badge -->
+                                    <Border Grid.Row="0" 
+                                            Style="{StaticResource BadgeBorder}"
+                                            HorizontalOptions="Start"
+                                            Margin="0,0,0,6">
+                                        <Label Text="{Binding Category.Name}" Style="{StaticResource BadgeLabel}" FontSize="11"/>
+                                    </Border>
                                     
-                                    <Grid Grid.Row="2" ColumnDefinitions="*, Auto" Margin="0,15,0,0" VerticalOptions="End">
+                                    <!-- Product Name -->
+                                    <Label Grid.Row="1" Text="{Binding Name}" Style="{StaticResource ProductName}"/>
+                                    
+                                    <!-- Price + Add Button -->
+                                    <Grid Grid.Row="3" ColumnDefinitions="*, Auto" Margin="0,10,0,0" VerticalOptions="End">
                                         <Label Grid.Column="0" 
                                                Text="{Binding Price, StringFormat='{0:N0} đ'}" 
                                                Style="{StaticResource PriceLabel}" 
+                                               FontSize="17"
                                                VerticalOptions="Center"/>
                                         <Button Grid.Column="1" 
                                                 Text="+" 
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PosViewModel}}, Path=AddToCartCommand}"
                                                 CommandParameter="{Binding .}"
                                                 Style="{StaticResource SuccessButton}"
-                                                WidthRequest="40"
-                                                HeightRequest="40"/>
+                                                CornerRadius="12"
+                                                WidthRequest="44"
+                                                HeightRequest="44"
+                                                FontSize="22"/>
                                     </Grid>
                                 </Grid>
-                            </Frame>
+                            </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
+                    
+                    <CollectionView.EmptyView>
+                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10" Padding="30">
+                            <Label Text="🐠" FontSize="48" HorizontalOptions="Center"/>
+                            <Label Text="Chưa có sản phẩm" Style="{StaticResource EmptyViewLabel}"/>
+                        </StackLayout>
+                    </CollectionView.EmptyView>
                 </CollectionView>
             </RefreshView>
         </Grid>
 
-        <!-- Cột phải: Giỏ hàng & Thanh toán -->
-        <Frame Grid.Column="1" HasShadow="False" CornerRadius="12" Padding="0" 
-               BackgroundColor="{AppThemeBinding Light={StaticResource SidebarBg}, Dark={StaticResource SidebarBgDark}}"
-               BorderColor="{AppThemeBinding Light={StaticResource CardBorder}, Dark={StaticResource CardBorderDark}}">
+        <!-- ═══ Right: Cart Sidebar ═══ -->
+        <Border Grid.Column="1" 
+                StrokeShape="RoundRectangle 0"
+                Stroke="{AppThemeBinding Light={StaticResource CardBorder}, Dark={StaticResource CardBorderDark}}"
+                StrokeThickness="1"
+                BackgroundColor="{AppThemeBinding Light={StaticResource CardBg}, Dark={StaticResource CardBgDark}}"
+                Padding="0">
             <Grid RowDefinitions="Auto, *, Auto">
                 
-                <Frame Grid.Row="0" Style="{StaticResource CartHeaderFrame}">
-                    <Label Text="🛒 Giỏ Hàng" TextColor="White" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
-                </Frame>
+                <!-- Cart Header with Gradient -->
+                <Grid Grid.Row="0" Padding="20,18" HeightRequest="65">
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="{StaticResource GradientStart}" Offset="0.0" />
+                            <GradientStop Color="{StaticResource GradientEnd}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <Label Text="🛒 Giỏ Hàng" TextColor="White" FontSize="20" FontAttributes="Bold" 
+                           VerticalOptions="Center"/>
+                </Grid>
 
-                <CollectionView Grid.Row="1" ItemsSource="{Binding CartService.Items}">
+                <!-- Cart Items -->
+                <CollectionView Grid.Row="1" ItemsSource="{Binding CartService.Items}" Margin="0,5,0,0">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid ColumnDefinitions="*, Auto, Auto" Padding="10" Margin="0,0,0,5" 
-                                  BackgroundColor="{AppThemeBinding Light={StaticResource CardBg}, Dark={StaticResource CardBgDark}}">
-                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
-                                    <Label Text="{Binding Product.Name}" FontAttributes="Bold" 
-                                           TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}"/>
+                        <DataTemplate x:DataType="models:CartItem">
+                            <Grid ColumnDefinitions="*, Auto, Auto" Padding="16,12" Margin="0,0,0,0"
+                                  BackgroundColor="Transparent">
+                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="3">
+                                    <Label Text="{Binding Product.Name}" FontAttributes="Bold" FontSize="14"
+                                           TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}"
+                                           LineBreakMode="TailTruncation" MaxLines="1"/>
                                     <Label Text="{Binding SubTotal, StringFormat='{0:N0} đ'}" 
                                            Style="{StaticResource PriceLabel}" FontSize="13"/>
                                 </VerticalStackLayout>
 
-                                <Label Grid.Column="1" Text="{Binding Quantity, StringFormat='x{0}'}" 
-                                       FontAttributes="Bold" VerticalOptions="Center" Margin="10,0"
-                                       TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}"/>
+                                <!-- Quantity Badge -->
+                                <Border Grid.Column="1" 
+                                        StrokeShape="RoundRectangle 8"
+                                        StrokeThickness="0"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark=#164e63}"
+                                        Padding="10,5"
+                                        VerticalOptions="Center"
+                                        Margin="8,0">
+                                    <Label Text="{Binding Quantity, StringFormat='x{0}'}" 
+                                           FontAttributes="Bold" FontSize="13"
+                                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                                           HorizontalOptions="Center"/>
+                                </Border>
 
                                 <Button Grid.Column="2"
                                         Text="✕"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PosViewModel}}, Path=RemoveFromCartCommand}"
                                         CommandParameter="{Binding Product}"
                                         BackgroundColor="Transparent"
-                                        TextColor="{AppThemeBinding Light={StaticResource Danger}, Dark={StaticResource DangerDark}}"
-                                        FontSize="16"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                        FontSize="14"
                                         WidthRequest="36" HeightRequest="36"
                                         Padding="0"/>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
+                    
+                    <CollectionView.EmptyView>
+                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8" Padding="20">
+                            <Label Text="🛒" FontSize="36" HorizontalOptions="Center" Opacity="0.4"/>
+                            <Label Text="Giỏ hàng trống" FontSize="14" HorizontalOptions="Center"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}"/>
+                        </StackLayout>
+                    </CollectionView.EmptyView>
                 </CollectionView>
 
                 <!-- Footer Checkout -->
-                <Frame Grid.Row="2" 
-                       BackgroundColor="{AppThemeBinding Light={StaticResource CardBg}, Dark={StaticResource CardBgDark}}" 
-                       BorderColor="{AppThemeBinding Light={StaticResource CardBorder}, Dark={StaticResource CardBorderDark}}" 
-                       CornerRadius="10" Padding="20" HasShadow="False">
-                    <VerticalStackLayout Spacing="15">
-                        <Grid ColumnDefinitions="*, Auto">
-                            <Label Grid.Column="0" Text="Tổng cộng:" FontSize="18" 
-                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}"/>
-                            <Label Grid.Column="1" 
-                                   Text="{Binding TotalAmount, StringFormat='{0:N0} VNĐ'}" 
-                                   Style="{StaticResource PriceLabelLarge}"/>
-                        </Grid>
+                <Grid Grid.Row="2" RowDefinitions="Auto, Auto" Padding="20,16" RowSpacing="14"
+                      BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                    
+                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                        <Label Grid.Column="0" Text="Tổng cộng" FontSize="16" 
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}"
+                               VerticalOptions="Center"/>
+                        <Label Grid.Column="1" 
+                               Text="{Binding TotalAmount, StringFormat='{0:N0} VNĐ'}" 
+                               Style="{StaticResource PriceLabelLarge}"
+                               VerticalOptions="Center"/>
+                    </Grid>
 
-                        <Button Text="💳 Thanh Toán" 
-                                Command="{Binding CheckoutCommand}"
-                                Style="{StaticResource CheckoutButton}"/>
-                    </VerticalStackLayout>
-                </Frame>
+                    <Button Grid.Row="1" Text="💳 Thanh Toán" 
+                            Command="{Binding CheckoutCommand}"
+                            Style="{StaticResource CheckoutButton}"/>
+                </Grid>
             </Grid>
-        </Frame>
+        </Border>
     </Grid>
 </ContentPage>

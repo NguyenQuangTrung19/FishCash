@@ -51,6 +51,35 @@
     <Color x:Key="SidebarBg">#f1f5f9</Color>        <!-- Slate-100 -->
     <Color x:Key="SidebarBgDark">#1e293b</Color>
 
+    <!-- ── Stat Card Accents ── -->
+    <Color x:Key="StatRevenue">#0d9488</Color>      <!-- Teal-600 -->
+    <Color x:Key="StatRevenueBg">#ccfbf1</Color>    <!-- Teal-100 -->
+    <Color x:Key="StatRevenueBgDark">#134e4a</Color>
+    <Color x:Key="StatOrders">#4f46e5</Color>       <!-- Indigo-600 -->
+    <Color x:Key="StatOrdersBg">#e0e7ff</Color>     <!-- Indigo-100 -->
+    <Color x:Key="StatOrdersBgDark">#312e81</Color>
+    <Color x:Key="StatProducts">#7c3aed</Color>     <!-- Violet-600 -->
+    <Color x:Key="StatProductsBg">#ede9fe</Color>   <!-- Violet-100 -->
+    <Color x:Key="StatProductsBgDark">#4c1d95</Color>
+
+    <!-- ── Form Input Colors ── -->
+    <Color x:Key="InputBg">#f8fafc</Color>          <!-- Slate-50 -->
+    <Color x:Key="InputBgDark">#1e293b</Color>      <!-- Slate-800 -->
+    <Color x:Key="InputBorder">#cbd5e1</Color>      <!-- Slate-300 -->
+    <Color x:Key="InputBorderDark">#475569</Color>  <!-- Slate-600 -->
+    <Color x:Key="InputFocusBorder">#0369a1</Color> <!-- Primary -->
+
+    <!-- ── Flyout Colors ── -->
+    <Color x:Key="FlyoutSelectedBg">#e0f2fe</Color>     <!-- Sky-100 -->
+    <Color x:Key="FlyoutSelectedBgDark">#0c4a6e</Color>
+    <Color x:Key="FlyoutItemText">#334155</Color>        <!-- Slate-700 -->
+    <Color x:Key="FlyoutItemTextDark">#cbd5e1</Color>
+
+    <!-- ── Gradient Colors ── -->
+    <Color x:Key="GradientStart">#0369a1</Color>    <!-- Ocean Blue -->
+    <Color x:Key="GradientMid">#0284c7</Color>      <!-- Sky-600 -->
+    <Color x:Key="GradientEnd">#0ea5e9</Color>      <!-- Sky-500 -->
+
     <!-- ── Base Colors (kept for Styles.xaml compatibility) ── -->
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>

@@ -2,86 +2,193 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
+             xmlns:models="clr-namespace:FishCash.Models"
              x:DataType="viewmodels:ProductViewModel"
              x:Class="FishCash.Views.ProductPage"
              Title="{Binding Title}"
              BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
-    <Grid RowDefinitions="Auto, Auto, *" Padding="20">
+    <Grid RowDefinitions="Auto, Auto, *" Padding="24">
         
-        <!-- Header -->
-        <Label Text="🦐 Kho Hải sản" Style="{StaticResource PageHeader}"/>
+        <!-- ═══ Header + Toggle Button ═══ -->
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,16">
+            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                <Label Text="🦐 Kho Hải sản" Style="{StaticResource PageHeader}"/>
+                <Label Text="Quản lý sản phẩm và giá bán" Style="{StaticResource SubText}" FontSize="13"/>
+            </VerticalStackLayout>
+            <Button Grid.Column="1" 
+                    Command="{Binding ToggleFormCommand}"
+                    Style="{StaticResource PrimaryButton}"
+                    VerticalOptions="Center"
+                    Padding="20,12"
+                    CornerRadius="12"
+                    FontSize="14">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsFormVisible}" Value="False">
+                        <Setter Property="Text" Value="＋ Thêm sản phẩm"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsFormVisible}" Value="True">
+                        <Setter Property="Text" Value="✕ Đóng"/>
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray600}}"/>
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </Grid>
 
-        <!-- Form Add Product -->
-        <Frame Grid.Row="1" Style="{StaticResource CardFrame}" Margin="0,0,0,20">
-            <VerticalStackLayout Spacing="15">
-                <Grid ColumnDefinitions="*, *, *" ColumnSpacing="15">
-                    <!-- Tên SP -->
+        <!-- ═══ Collapsible Add/Edit Product Form ═══ -->
+        <Border Grid.Row="1" 
+                Style="{StaticResource CardFrame}" 
+                Margin="0,0,0,20"
+                IsVisible="{Binding IsFormVisible}">
+            <VerticalStackLayout Spacing="18">
+                <!-- Form Title -->
+                <Label FontSize="16" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="False">
+                            <Setter Property="Text" Value="📝 Thêm sản phẩm mới"/>
+                        </DataTrigger>
+                        <DataTrigger TargetType="Label" Binding="{Binding IsEditing}" Value="True">
+                            <Setter Property="Text" Value="✏️ Chỉnh sửa sản phẩm"/>
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+
+                <!-- Row 1: Name + Price -->
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="16">
                     <VerticalStackLayout Grid.Column="0">
                         <Label Text="Tên sản phẩm" Style="{StaticResource FormLabel}"/>
-                        <Entry Placeholder="VD: Mực ống tươi..." Text="{Binding NewProductName}" />
+                        <Border Style="{StaticResource InputBorder}">
+                            <Entry Placeholder="VD: Mực ống tươi..." 
+                                   Text="{Binding NewProductName}" 
+                                   IsSpellCheckEnabled="False"
+                                   IsTextPredictionEnabled="False"
+                                   BackgroundColor="Transparent"
+                                   FontSize="14"/>
+                        </Border>
                     </VerticalStackLayout>
                     
-                    <!-- Giá -->
                     <VerticalStackLayout Grid.Column="1">
                         <Label Text="Giá bán (VNĐ)" Style="{StaticResource FormLabel}"/>
-                        <Entry Placeholder="150000" Keyboard="Numeric" Text="{Binding NewProductPrice}" />
-                    </VerticalStackLayout>
-
-                    <!-- Danh mục -->
-                    <VerticalStackLayout Grid.Column="2">
-                        <Label Text="Danh mục" Style="{StaticResource FormLabel}"/>
-                        <Picker ItemsSource="{Binding Categories}" 
-                                ItemDisplayBinding="{Binding Name}" 
-                                SelectedItem="{Binding SelectedCategory}" 
-                                Title="Chọn danh mục" />
+                        <Border Style="{StaticResource InputBorder}">
+                            <Entry Placeholder="VD: 100.000" 
+                                   Keyboard="Numeric" 
+                                   Text="{Binding NewProductPriceText}" 
+                                   BackgroundColor="Transparent"
+                                   FontSize="14"/>
+                        </Border>
                     </VerticalStackLayout>
                 </Grid>
 
-                <Grid ColumnDefinitions="*, Auto" ColumnSpacing="15">
-                    <HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
-                        <Label Text="Đơn vị tính:" VerticalOptions="Center" 
-                               Style="{StaticResource SubText}" FontSize="14"/>
-                        <Entry Text="{Binding NewProductUnit}" WidthRequest="80" HorizontalOptions="Start"/>
-                    </HorizontalStackLayout>
-                    
-                    <Button Grid.Column="1" 
-                            Text="+ Nhập Kho" 
+                <!-- Row 2: Category + Unit + Submit -->
+                <Grid ColumnDefinitions="2*, *, Auto" ColumnSpacing="16">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Danh mục" Style="{StaticResource FormLabel}"/>
+                        <Border Style="{StaticResource InputBorder}">
+                            <Picker ItemsSource="{Binding Categories}" 
+                                    ItemDisplayBinding="{Binding Name}" 
+                                    SelectedItem="{Binding SelectedCategory}" 
+                                    Title="Chọn danh mục"
+                                    BackgroundColor="Transparent"
+                                    FontSize="14"/>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Đơn vị" Style="{StaticResource FormLabel}"/>
+                        <Border Style="{StaticResource InputBorder}">
+                            <Picker ItemsSource="{Binding UnitOptions}" 
+                                    SelectedItem="{Binding NewProductUnit}"
+                                    BackgroundColor="Transparent"
+                                    FontSize="14"/>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <Button Grid.Column="2" 
                             Command="{Binding AddProductCommand}"
-                            Style="{StaticResource InfoButton}"
-                            Padding="30,12"/>
+                            Style="{StaticResource SuccessButton}"
+                            VerticalOptions="End"
+                            Padding="24,0"
+                            CornerRadius="12"
+                            HeightRequest="48"
+                            FontSize="15">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="False">
+                                <Setter Property="Text" Value="💾 Nhập kho"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsEditing}" Value="True">
+                                <Setter Property="Text" Value="💾 Cập nhật"/>
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
                 </Grid>
             </VerticalStackLayout>
-        </Frame>
+        </Border>
 
-        <!-- Product List -->
+        <!-- ═══ Product List ═══ -->
         <RefreshView Grid.Row="2" Command="{Binding LoadDataCommand}" IsRefreshing="{Binding IsBusy}">
             <CollectionView ItemsSource="{Binding Products}">
                 <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
+                    <GridItemsLayout Orientation="Vertical" Span="3" VerticalItemSpacing="12" HorizontalItemSpacing="12"/>
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Style="{StaticResource CardFrameFlat}">
-                            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
-                                <VerticalStackLayout Grid.Column="0" Spacing="5">
-                                    <Label Text="{Binding Name}" Style="{StaticResource ProductName}"/>
-                                    <HorizontalStackLayout Spacing="10">
-                                        <Frame Style="{StaticResource BadgeFrame}">
-                                            <Label Text="{Binding Category.Name}" Style="{StaticResource BadgeLabel}"/>
-                                        </Frame>
-                                        <Label Text="{Binding Price, StringFormat='{0:N0} VNĐ'}" 
-                                               Style="{StaticResource PriceLabel}" 
-                                               FontSize="14" VerticalOptions="Center"/>
-                                        <Label Text="{Binding Unit, StringFormat='/ {0}'}" 
-                                               Style="{StaticResource SubText}" 
-                                               FontSize="14" VerticalOptions="Center"/>
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
+                    <DataTemplate x:DataType="models:Product">
+                        <Border Style="{StaticResource CardFrameFlat}" Padding="16">
+                            <Grid RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="6">
+                                <!-- Category Badge + Action Buttons -->
+                                <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" ColumnSpacing="6">
+                                    <Border Grid.Column="0"
+                                            Style="{StaticResource BadgeBorder}"
+                                            HorizontalOptions="Start">
+                                        <Label Text="{Binding Category.Name}" Style="{StaticResource BadgeLabel}" FontSize="11"/>
+                                    </Border>
+                                    <!-- Edit Button -->
+                                    <Button Grid.Column="1"
+                                            Text="✏️"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductViewModel}}, Path=EditProductCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Transparent"
+                                            FontSize="14"
+                                            WidthRequest="34" HeightRequest="34"
+                                            Padding="0"
+                                            ToolTipProperties.Text="Chỉnh sửa"/>
+                                    <!-- Delete Button -->
+                                    <Button Grid.Column="2"
+                                            Text="🗑️"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductViewModel}}, Path=DeleteProductCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Transparent"
+                                            FontSize="14"
+                                            WidthRequest="34" HeightRequest="34"
+                                            Padding="0"
+                                            ToolTipProperties.Text="Xóa"/>
+                                </Grid>
+                                
+                                <!-- Product Name -->
+                                <Label Grid.Row="1" Text="{Binding Name}" Style="{StaticResource ProductName}" Margin="0,4,0,0"/>
+                                
+                                <!-- Price + Unit -->
+                                <HorizontalStackLayout Grid.Row="2" Spacing="4" Margin="0,6,0,0">
+                                    <Label Text="{Binding Price, StringFormat='{0:N0} đ'}" 
+                                           Style="{StaticResource PriceLabel}" 
+                                           FontSize="15" VerticalOptions="Center"/>
+                                    <Label Text="{Binding Unit, StringFormat='/ {0}'}" 
+                                           Style="{StaticResource SubText}" 
+                                           FontSize="13" VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
                             </Grid>
-                        </Frame>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+                
+                <CollectionView.EmptyView>
+                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10" Padding="40">
+                        <Label Text="🦐" FontSize="48" HorizontalOptions="Center"/>
+                        <Label Text="Chưa có sản phẩm nào" Style="{StaticResource EmptyViewLabel}"/>
+                        <Label Text="Nhấn nút '＋ Thêm sản phẩm' để bắt đầu" 
+                               Style="{StaticResource SubText}" HorizontalOptions="Center"/>
+                    </StackLayout>
+                </CollectionView.EmptyView>
             </CollectionView>
         </RefreshView>
     </Grid>

@@ -8,86 +8,122 @@
              BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="25">
+        <VerticalStackLayout Padding="24" Spacing="24">
             
-            <!-- Header -->
+            <!-- ═══ Welcome Header ═══ -->
             <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
-                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                <VerticalStackLayout Grid.Column="0" Spacing="4">
                     <Label Text="👋 Chào mừng đến FishCash" 
-                           FontSize="28" 
+                           FontSize="26" 
                            FontAttributes="Bold" 
                            TextColor="{AppThemeBinding Light={StaticResource TextHeading}, Dark={StaticResource TextHeadingDark}}"/>
                     <Label Text="{Binding CurrentDateText}" 
                            Style="{StaticResource SubText}" 
-                           FontSize="16"/>
+                           FontSize="14"/>
                 </VerticalStackLayout>
+                <Border Grid.Column="1" 
+                        Style="{StaticResource IconCircle}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark=#164e63}">
+                    <Label Text="🐟" FontSize="24" 
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
             </Grid>
 
-            <!-- Thống kê tổng quan -->
+            <!-- ═══ Stat Cards ═══ -->
             <Label Text="📊 Tổng quan kinh doanh" Style="{StaticResource SectionHeader}"/>
-            <Grid ColumnDefinitions="*, *, *" ColumnSpacing="15">
+            <Grid ColumnDefinitions="*, *, *" ColumnSpacing="14">
                 
-                <!-- Doanh thu -->
-                <Frame Grid.Column="0" Style="{StaticResource CardFrame}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="💰 Tổng Doanh Thu" Style="{StaticResource SubText}" FontAttributes="Bold"/>
-                        <Label Text="{Binding TotalRevenue, StringFormat='{0:N0} đ'}" 
-                               Style="{StaticResource PriceLabelLarge}" 
-                               TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
-                    </VerticalStackLayout>
-                </Frame>
+                <!-- Revenue Card -->
+                <Border Grid.Column="0" Style="{StaticResource StatCardBorder}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource StatRevenueBg}, Dark={StaticResource StatRevenueBgDark}}">
+                    <Grid RowDefinitions="Auto, Auto, *">
+                        <Label Grid.Row="0" Text="💰" Style="{StaticResource StatIcon}"
+                               TextColor="{AppThemeBinding Light={StaticResource StatRevenue}, Dark={StaticResource StatRevenue}}"/>
+                        <Label Grid.Row="0" Text="Doanh thu" Style="{StaticResource StatLabel}"
+                               TextColor="{AppThemeBinding Light={StaticResource StatRevenue}, Dark=#5eead4}"/>
+                        <Label Grid.Row="1" 
+                               Text="{Binding TotalRevenue, StringFormat='{0:N0} đ'}" 
+                               Style="{StaticResource StatValue}" 
+                               TextColor="{AppThemeBinding Light={StaticResource StatRevenue}, Dark=#5eead4}"
+                               Margin="0,8,0,0"/>
+                    </Grid>
+                </Border>
 
-                <!-- Đơn hàng -->
-                <Frame Grid.Column="1" Style="{StaticResource CardFrame}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="📦 Tổng Đơn Hàng" Style="{StaticResource SubText}" FontAttributes="Bold"/>
-                        <Label Text="{Binding TotalOrders}" 
-                               FontSize="24" FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light={StaticResource TextHeading}, Dark={StaticResource TextHeadingDark}}"/>
-                    </VerticalStackLayout>
-                </Frame>
+                <!-- Orders Card -->
+                <Border Grid.Column="1" Style="{StaticResource StatCardBorder}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource StatOrdersBg}, Dark={StaticResource StatOrdersBgDark}}">
+                    <Grid RowDefinitions="Auto, Auto, *">
+                        <Label Grid.Row="0" Text="📦" Style="{StaticResource StatIcon}"
+                               TextColor="{AppThemeBinding Light={StaticResource StatOrders}, Dark={StaticResource StatOrders}}"/>
+                        <Label Grid.Row="0" Text="Đơn hàng" Style="{StaticResource StatLabel}"
+                               TextColor="{AppThemeBinding Light={StaticResource StatOrders}, Dark=#a5b4fc}"/>
+                        <Label Grid.Row="1" 
+                               Text="{Binding TotalOrders}" 
+                               Style="{StaticResource StatValue}" 
+                               TextColor="{AppThemeBinding Light={StaticResource StatOrders}, Dark=#a5b4fc}"
+                               Margin="0,8,0,0"/>
+                    </Grid>
+                </Border>
 
-                <!-- Sản phẩm bán -->
-                <Frame Grid.Column="2" Style="{StaticResource CardFrame}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="🐠 Sản Phẩm Đã Bán" Style="{StaticResource SubText}" FontAttributes="Bold"/>
-                        <Label Text="{Binding TotalProductsSold}" 
-                               FontSize="24" FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light={StaticResource TextHeading}, Dark={StaticResource TextHeadingDark}}"/>
-                    </VerticalStackLayout>
-                </Frame>
+                <!-- Products Sold Card -->
+                <Border Grid.Column="2" Style="{StaticResource StatCardBorder}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource StatProductsBg}, Dark={StaticResource StatProductsBgDark}}">
+                    <Grid RowDefinitions="Auto, Auto, *">
+                        <Label Grid.Row="0" Text="🐠" Style="{StaticResource StatIcon}"
+                               TextColor="{AppThemeBinding Light={StaticResource StatProducts}, Dark={StaticResource StatProducts}}"/>
+                        <Label Grid.Row="0" Text="SP đã bán" Style="{StaticResource StatLabel}"
+                               TextColor="{AppThemeBinding Light={StaticResource StatProducts}, Dark=#c4b5fd}"/>
+                        <Label Grid.Row="1" 
+                               Text="{Binding TotalProductsSold}" 
+                               Style="{StaticResource StatValue}" 
+                               TextColor="{AppThemeBinding Light={StaticResource StatProducts}, Dark=#c4b5fd}"
+                               Margin="0,8,0,0"/>
+                    </Grid>
+                </Border>
             </Grid>
 
-            <!-- Lối tắt / Quick Actions -->
-            <Label Text="🚀 Truy cập nhanh" Style="{StaticResource SectionHeader}" Margin="0,10,0,0"/>
-            <Grid ColumnDefinitions="*, *, *" ColumnSpacing="15">
+            <!-- ═══ Quick Actions ═══ -->
+            <Label Text="🚀 Truy cập nhanh" Style="{StaticResource SectionHeader}" Margin="0,6,0,0"/>
+            <Grid ColumnDefinitions="*, *, *" ColumnSpacing="14">
                 <Button Grid.Column="0" 
-                        Text="🛒 Bán hàng (POS)" 
+                        Text="🛒  Bán hàng" 
                         Command="{Binding NavigateToCommand}" 
                         CommandParameter="PosPage"
-                        Style="{StaticResource PrimaryButton}" 
-                        Padding="15,20" FontSize="16"/>
+                        Style="{StaticResource QuickActionButton}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
+                    <Button.Shadow>
+                        <Shadow Brush="{StaticResource Primary}" Offset="0,3" Radius="8" Opacity="0.3"/>
+                    </Button.Shadow>
+                </Button>
                         
                 <Button Grid.Column="1" 
-                        Text="🦐 Quản lý Sản phẩm" 
+                        Text="🦐  Sản phẩm" 
                         Command="{Binding NavigateToCommand}" 
                         CommandParameter="ProductPage"
-                        Style="{StaticResource InfoButton}" 
-                        Padding="15,20" FontSize="16"/>
+                        Style="{StaticResource QuickActionButton}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Info}, Dark={StaticResource InfoDark}}">
+                    <Button.Shadow>
+                        <Shadow Brush="{StaticResource Info}" Offset="0,3" Radius="8" Opacity="0.3"/>
+                    </Button.Shadow>
+                </Button>
                         
                 <Button Grid.Column="2" 
-                        Text="📁 Quản lý Danh mục" 
+                        Text="📁  Danh mục" 
                         Command="{Binding NavigateToCommand}" 
                         CommandParameter="CategoryPage"
-                        Style="{StaticResource SecondaryButton}" 
-                        Padding="15,20" FontSize="16"/>
+                        Style="{StaticResource QuickActionButton}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Accent}, Dark=#2dd4bf}">
+                    <Button.Shadow>
+                        <Shadow Brush="{StaticResource Accent}" Offset="0,3" Radius="8" Opacity="0.3"/>
+                    </Button.Shadow>
+                </Button>
             </Grid>
 
-            <!-- Hoạt động gần đây -->
-            <Grid ColumnDefinitions="*, Auto" Margin="0,15,0,5" VerticalOptions="End">
+            <!-- ═══ Recent Orders ═══ -->
+            <Grid ColumnDefinitions="*, Auto" Margin="0,10,0,4" VerticalOptions="End">
                 <Label Grid.Column="0" Text="🕒 Đơn hàng gần đây" Style="{StaticResource SectionHeader}"/>
-                <Button Grid.Column="1" Text="Làm mới" Command="{Binding LoadDashboardDataCommand}" 
-                        Style="{StaticResource SecondaryButton}" Padding="15,8" FontSize="14" MinimumHeightRequest="36"/>
+                <Button Grid.Column="1" Text="↻ Làm mới" Command="{Binding LoadDashboardDataCommand}" 
+                        Style="{StaticResource SecondaryButton}" Padding="16,8" FontSize="13" MinimumHeightRequest="36" CornerRadius="18"/>
             </Grid>
             
             <CollectionView ItemsSource="{Binding RecentOrders}">
@@ -96,17 +132,23 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame Style="{StaticResource CardFrameFlat}" Padding="15,10">
-                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="15" VerticalOptions="Center">
+                        <Border Style="{StaticResource CardFrameFlat}" Padding="16,14">
+                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14" VerticalOptions="Center">
                                 
-                                <Frame Grid.Column="0" Style="{StaticResource BadgeFrame}" 
-                                       BackgroundColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}">
-                                    <Label Text="✓" TextColor="White" FontAttributes="Bold"/>
-                                </Frame>
+                                <!-- Success indicator -->
+                                <Border Grid.Column="0" 
+                                        StrokeShape="RoundRectangle 20"
+                                        StrokeThickness="0"
+                                        WidthRequest="40" HeightRequest="40"
+                                        BackgroundColor="{AppThemeBinding Light=#dcfce7, Dark=#14532d}">
+                                    <Label Text="✓" TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}" 
+                                           FontAttributes="Bold" FontSize="16"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
 
-                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
                                     <Label Text="{Binding OrderDate, StringFormat='Ngày: {0:dd/MM/yyyy HH:mm}'}" 
-                                           FontAttributes="Bold" 
+                                           FontAttributes="Bold" FontSize="14"
                                            TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}"/>
                                     <Label Text="{Binding PaymentMethod}" Style="{StaticResource SubText}"/>
                                 </VerticalStackLayout>
@@ -115,15 +157,19 @@
                                        Text="{Binding TotalAmount, StringFormat='+ {0:N0} đ'}" 
                                        Style="{StaticResource PriceLabel}"
                                        TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}"
-                                       VerticalOptions="Center"/>
+                                       VerticalOptions="Center"
+                                       FontSize="15"/>
                             </Grid>
-                        </Frame>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 
                 <CollectionView.EmptyView>
-                    <StackLayout HorizontalOptions="Center" Spacing="10" Padding="30">
+                    <StackLayout HorizontalOptions="Center" Spacing="10" Padding="40">
+                        <Label Text="📋" FontSize="40" HorizontalOptions="Center"/>
                         <Label Text="Chưa có đơn hàng nào" Style="{StaticResource EmptyViewLabel}"/>
+                        <Label Text="Bắt đầu bán hàng để xem dữ liệu ở đây" 
+                               Style="{StaticResource SubText}" HorizontalOptions="Center"/>
                     </StackLayout>
                 </CollectionView.EmptyView>
             </CollectionView>

@@ -6,48 +6,89 @@
     xmlns:local="clr-namespace:FishCash"
     xmlns:views="clr-namespace:FishCash.Views"
     Title="FishCash"
-    FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}"
+    FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource CardBg}, Dark={StaticResource PageBgDark}}"
     FlyoutWidth="280">
 
-    <!-- Flyout Header -->
+    <!-- Flyout Header with Gradient -->
     <Shell.FlyoutHeader>
-        <Grid HeightRequest="120" 
-              BackgroundColor="{AppThemeBinding Light={StaticResource HeaderBg}, Dark={StaticResource HeaderBgDark}}"
-              Padding="20">
-            <VerticalStackLayout VerticalOptions="Center" Spacing="4">
+        <Grid HeightRequest="140" Padding="0">
+            <!-- Gradient Background -->
+            <BoxView>
+                <BoxView.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="{StaticResource GradientStart}" Offset="0.0" />
+                        <GradientStop Color="{StaticResource GradientMid}" Offset="0.5" />
+                        <GradientStop Color="{StaticResource GradientEnd}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </BoxView.Background>
+            </BoxView>
+            <VerticalStackLayout VerticalOptions="Center" Spacing="6" Padding="24,0">
                 <Label Text="🐟 FishCash" 
-                       FontSize="26" 
+                       FontSize="28" 
                        FontAttributes="Bold" 
                        TextColor="White"/>
                 <Label Text="Quản lý cửa hàng hải sản" 
                        FontSize="13" 
-                       TextColor="#7dd3fc"/>
+                       TextColor="#bae6fd"
+                       Opacity="0.9"/>
             </VerticalStackLayout>
         </Grid>
     </Shell.FlyoutHeader>
 
-    <FlyoutItem Title="Tổng quan (Dashboard)">
+    <!-- Flyout Item Template -->
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid ColumnDefinitions="Auto, *" 
+                  Padding="20,14" 
+                  ColumnSpacing="14"
+                  BackgroundColor="Transparent">
+                <Image Grid.Column="0" 
+                       Source="{Binding FlyoutIcon}" 
+                       WidthRequest="22" 
+                       HeightRequest="22"
+                       VerticalOptions="Center" />
+                <Label Grid.Column="1" 
+                       Text="{Binding Title}" 
+                       FontSize="15"
+                       TextColor="{AppThemeBinding Light={StaticResource FlyoutItemText}, Dark={StaticResource FlyoutItemTextDark}}"
+                       VerticalOptions="Center" />
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+
+    <FlyoutItem Title="Tổng quan" FlyoutIcon="dashboard_icon.png">
         <ShellContent
             ContentTemplate="{DataTemplate views:DashboardPage}"
             Route="DashboardPage" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Máy tính tiền (POS)">
+    <FlyoutItem Title="Bán hàng (POS)" FlyoutIcon="pos_icon.png">
         <ShellContent
             ContentTemplate="{DataTemplate views:PosPage}"
             Route="PosPage" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Danh mục">
+    <FlyoutItem Title="Danh mục" FlyoutIcon="category_icon.png">
         <ShellContent
             ContentTemplate="{DataTemplate views:CategoryPage}"
             Route="CategoryPage" />
     </FlyoutItem>
     
-    <FlyoutItem Title="Sản phẩm">
+    <FlyoutItem Title="Sản phẩm" FlyoutIcon="product_icon.png">
         <ShellContent
             ContentTemplate="{DataTemplate views:ProductPage}"
             Route="ProductPage" />
     </FlyoutItem>
+
+    <!-- Flyout Footer -->
+    <Shell.FlyoutFooter>
+        <Grid Padding="24,16" 
+              BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+            <Label Text="FishCash v1.0 · Made with 💙" 
+                   FontSize="11" 
+                   TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}" 
+                   HorizontalOptions="Center"/>
+        </Grid>
+    </Shell.FlyoutFooter>
 
 </Shell>
