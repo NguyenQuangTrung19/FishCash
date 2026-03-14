@@ -61,7 +61,7 @@
             Route="DashboardPage" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Phiên giao dịch" FlyoutIcon="pos_icon.png">
+    <FlyoutItem Title="Bán hàng" FlyoutIcon="pos_icon.png">
         <ShellContent
             ContentTemplate="{DataTemplate views:TradingSessionPage}"
             Route="TradingSessionPage" />
@@ -71,12 +71,6 @@
         <ShellContent
             ContentTemplate="{DataTemplate views:PartnerPage}"
             Route="PartnerPage" />
-    </FlyoutItem>
-
-    <FlyoutItem Title="Bán hàng (POS)" FlyoutIcon="pos_icon.png">
-        <ShellContent
-            ContentTemplate="{DataTemplate views:PosPage}"
-            Route="PosPage" />
     </FlyoutItem>
 
     <FlyoutItem Title="Danh mục" FlyoutIcon="category_icon.png">

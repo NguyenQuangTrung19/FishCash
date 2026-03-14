@@ -16,6 +16,15 @@ public partial class ProductPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.LoadDataAsync();
+        try
+        {
+            // Reset IsBusy in case it was left stuck from a previous interrupted load
+            _viewModel.IsBusy = false;
+            await _viewModel.LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ProductPage] OnAppearing error: {ex.Message}");
+        }
     }
 }

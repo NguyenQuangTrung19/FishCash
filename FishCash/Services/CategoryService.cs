@@ -10,12 +10,12 @@ namespace FishCash.Services;
 /// </summary>
 public class CategoryService : ICategoryService
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
     private readonly ILogger<CategoryService> _logger;
 
-    public CategoryService(AppDbContext context, ILogger<CategoryService> logger)
+    public CategoryService(IDbContextFactory<AppDbContext> contextFactory, ILogger<CategoryService> logger)
     {
-        _context = context;
+        _contextFactory = contextFactory;
         _logger = logger;
     }
 
@@ -23,7 +23,8 @@ public class CategoryService : ICategoryService
     {
         try
         {
-            return await _context.Categories.ToListAsync();
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Categories.ToListAsync();
         }
         catch (Exception ex)
         {
@@ -36,8 +37,9 @@ public class CategoryService : ICategoryService
     {
         try
         {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.Categories.Add(category);
+            await context.SaveChangesAsync();
             _logger.LogInformation("Added category: {Name}", category.Name);
         }
         catch (Exception ex)
@@ -51,8 +53,9 @@ public class CategoryService : ICategoryService
     {
         try
         {
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.Categories.Update(category);
+            await context.SaveChangesAsync();
             _logger.LogInformation("Updated category: {Id} - {Name}", category.Id, category.Name);
         }
         catch (Exception ex)
@@ -66,8 +69,9 @@ public class CategoryService : ICategoryService
     {
         try
         {
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.Categories.Remove(category);
+            await context.SaveChangesAsync();
             _logger.LogInformation("Deleted category: {Id} - {Name}", category.Id, category.Name);
         }
         catch (Exception ex)

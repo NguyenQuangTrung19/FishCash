@@ -6,12 +6,12 @@
              x:Class="FishCash.App">
     <Application.Resources>
         <ResourceDictionary>
-            <helpers:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/FishCashStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <helpers:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

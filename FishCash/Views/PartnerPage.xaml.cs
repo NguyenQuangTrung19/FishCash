@@ -4,16 +4,27 @@ namespace FishCash.Views;
 
 public partial class PartnerPage : ContentPage
 {
-    public PartnerPage(PartnerViewModel vm)
+    private readonly PartnerViewModel _viewModel;
+
+    public PartnerPage(PartnerViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = vm;
+        BindingContext = viewModel;
+        _viewModel = viewModel;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (BindingContext is PartnerViewModel vm)
-            vm.LoadPartnersCommand.Execute(null);
+        try
+        {
+            // Reset IsBusy in case it was left stuck from a previous interrupted load
+            _viewModel.IsBusy = false;
+            await _viewModel.LoadPartnersCommand.ExecuteAsync(null);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[PartnerPage] OnAppearing error: {ex.Message}");
+        }
     }
 }

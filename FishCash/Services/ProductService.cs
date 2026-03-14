@@ -10,12 +10,12 @@ namespace FishCash.Services;
 /// </summary>
 public class ProductService : IProductService
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
     private readonly ILogger<ProductService> _logger;
 
-    public ProductService(AppDbContext context, ILogger<ProductService> logger)
+    public ProductService(IDbContextFactory<AppDbContext> contextFactory, ILogger<ProductService> logger)
     {
-        _context = context;
+        _contextFactory = contextFactory;
         _logger = logger;
     }
 
@@ -23,7 +23,8 @@ public class ProductService : IProductService
     {
         try
         {
-            return await _context.Products.Include(p => p.Category).ToListAsync();
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Products.Include(p => p.Category).ToListAsync();
         }
         catch (Exception ex)
         {
@@ -36,7 +37,8 @@ public class ProductService : IProductService
     {
         try
         {
-            return await _context.Products
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Products
                 .Where(p => p.CategoryId == categoryId)
                 .ToListAsync();
         }
@@ -51,8 +53,9 @@ public class ProductService : IProductService
     {
         try
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.Products.Add(product);
+            await context.SaveChangesAsync();
             _logger.LogInformation("Added product: {Name} (Price: {Price})", product.Name, product.Price);
         }
         catch (Exception ex)
@@ -66,8 +69,9 @@ public class ProductService : IProductService
     {
         try
         {
-            _context.Products.Update(product);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.Products.Update(product);
+            await context.SaveChangesAsync();
             _logger.LogInformation("Updated product: {Id} - {Name}", product.Id, product.Name);
         }
         catch (Exception ex)
@@ -81,8 +85,9 @@ public class ProductService : IProductService
     {
         try
         {
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.Products.Remove(product);
+            await context.SaveChangesAsync();
             _logger.LogInformation("Deleted product: {Id} - {Name}", product.Id, product.Name);
         }
         catch (Exception ex)

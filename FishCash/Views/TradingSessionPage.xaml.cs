@@ -4,16 +4,27 @@ namespace FishCash.Views;
 
 public partial class TradingSessionPage : ContentPage
 {
-    public TradingSessionPage(TradingSessionViewModel vm)
+    private readonly TradingSessionViewModel _viewModel;
+
+    public TradingSessionPage(TradingSessionViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = vm;
+        BindingContext = viewModel;
+        _viewModel = viewModel;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (BindingContext is TradingSessionViewModel vm)
-            vm.LoadSessionsCommand.Execute(null);
+        try
+        {
+            // Reset IsBusy in case it was left stuck from a previous interrupted load
+            _viewModel.IsBusy = false;
+            await _viewModel.LoadSessionsCommand.ExecuteAsync(null);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[TradingSessionPage] OnAppearing error: {ex.Message}");
+        }
     }
 }

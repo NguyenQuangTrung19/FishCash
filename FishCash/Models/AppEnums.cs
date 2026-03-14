@@ -49,13 +49,4 @@ public enum TradeOrderType
     Sale
 }
 
-/// <summary>
-/// Status of a trading session
-/// </summary>
-public enum SessionStatus
-{
-    /// <summary>Phiên đang mở, có thể thêm đơn</summary>
-    Active,
-    /// <summary>Phiên đã hoàn tất, đã tạo hóa đơn</summary>
-    Completed
-}
+

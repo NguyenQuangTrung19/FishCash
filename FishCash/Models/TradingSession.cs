@@ -24,7 +24,6 @@ public class TradingSession
     /// <summary>Lợi nhuận = TotalSales - TotalPurchase</summary>
     public decimal Profit => TotalSales - TotalPurchase;
 
-    public SessionStatus Status { get; set; } = SessionStatus.Active;
 
     // Navigation
     public ICollection<TradeOrder> TradeOrders { get; set; } = new List<TradeOrder>();

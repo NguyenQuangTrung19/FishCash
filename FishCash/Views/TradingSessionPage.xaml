@@ -3,15 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:FishCash.ViewModels"
              xmlns:models="clr-namespace:FishCash.Models"
+             xmlns:helpers="clr-namespace:FishCash.Helpers"
              x:DataType="viewmodels:TradingSessionViewModel"
              x:Class="FishCash.Views.TradingSessionPage"
              Title="{Binding Title}"
              BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
 
+    <ContentPage.Resources>
+        <helpers:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+    </ContentPage.Resources>
+
     <Grid>
-        <!-- ═══ Main Content: two modes ═══ -->
+        <!-- ═══ LAYER 1: Session List OR Active Session ═══ -->
         <Grid>
-            <!-- MODE 1: Session List (when no session is open) -->
+
+            <!-- MODE 1: Session List -->
             <Grid IsVisible="{Binding IsSessionActive, Converter={StaticResource InvertedBoolConverter}}"
                   RowDefinitions="Auto, *" Padding="24">
 
@@ -20,10 +26,9 @@
                         <Label Text="📊 Phiên giao dịch" Style="{StaticResource PageHeader}"/>
                         <Label Text="Quản lý mua vào - bán ra" Style="{StaticResource SubText}" FontSize="13"/>
                     </VerticalStackLayout>
-                    <Button Grid.Column="1" Text="＋ Tạo phiên mới"
-                            Command="{Binding ShowCreateSessionCommand}"
-                            Style="{StaticResource PrimaryButton}"
-                            VerticalOptions="Center" Padding="20,12" CornerRadius="12" FontSize="14"/>
+                    <Button Grid.Column="1" Text="＋ Tạo phiên mới" Command="{Binding ShowCreateSessionCommand}"
+                            Style="{StaticResource PrimaryButton}" VerticalOptions="Center"
+                            Padding="20,12" CornerRadius="12" FontSize="14"/>
                 </Grid>
 
                 <RefreshView Grid.Row="1" Command="{Binding LoadSessionsCommand}" IsRefreshing="{Binding IsBusy}">
@@ -41,45 +46,23 @@
                                     </Border.GestureRecognizers>
                                     <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
                                         <Border Grid.Column="0" StrokeShape="RoundRectangle 14" StrokeThickness="0"
+                                                BackgroundColor="{AppThemeBinding Light=#eff6ff, Dark=#172554}"
                                                 WidthRequest="44" HeightRequest="44" Padding="0">
-                                            <Border.Triggers>
-                                                <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="Active">
-                                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#fef3c7, Dark=#78350f}"/>
-                                                </DataTrigger>
-                                                <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="Completed">
-                                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#dcfce7, Dark=#14532d}"/>
-                                                </DataTrigger>
-                                            </Border.Triggers>
-                                            <Label FontSize="20" HorizontalOptions="Center" VerticalOptions="Center">
-                                                <Label.Triggers>
-                                                    <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Active">
-                                                        <Setter Property="Text" Value="🔄"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Completed">
-                                                        <Setter Property="Text" Value="✅"/>
-                                                    </DataTrigger>
-                                                </Label.Triggers>
-                                            </Label>
+                                            <Label Text="📊" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
                                         </Border>
-
                                         <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
                                             <Label Text="{Binding SessionDate, StringFormat='Phiên {0:dd/MM/yyyy HH:mm}'}"
                                                    FontSize="14" FontAttributes="Bold"
                                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}"/>
                                             <HorizontalStackLayout Spacing="12">
-                                                <Label Text="{Binding TotalPurchase, StringFormat='Mua: {0:N0}đ'}" 
-                                                       Style="{StaticResource SubText}" FontSize="12"/>
-                                                <Label Text="{Binding TotalSales, StringFormat='Bán: {0:N0}đ'}" 
-                                                       Style="{StaticResource SubText}" FontSize="12"/>
+                                                <Label Text="{Binding TotalPurchase, StringFormat='Mua: {0:N0}đ'}" Style="{StaticResource SubText}" FontSize="12"/>
+                                                <Label Text="{Binding TotalSales, StringFormat='Bán: {0:N0}đ'}" Style="{StaticResource SubText}" FontSize="12"/>
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
-
                                         <VerticalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="2">
-                                            <Label Text="{Binding Profit, StringFormat='{0:N0} đ'}" 
-                                                   FontSize="15" FontAttributes="Bold" HorizontalTextAlignment="End"
+                                            <Label Text="{Binding Profit, StringFormat='{0:N0} đ'}" FontSize="15" FontAttributes="Bold" HorizontalTextAlignment="End"
                                                    TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}"/>
-                                            <Label Text="Lợi nhuận" FontSize="10" HorizontalTextAlignment="End"
-                                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}"/>
+                                            <Label Text="Lợi nhuận" FontSize="10" HorizontalTextAlignment="End" Style="{StaticResource SubText}"/>
                                         </VerticalStackLayout>
                                     </Grid>
                                 </Border>
@@ -89,138 +72,158 @@
                             <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10" Padding="40">
                                 <Label Text="📊" FontSize="48" HorizontalOptions="Center"/>
                                 <Label Text="Chưa có phiên giao dịch" Style="{StaticResource EmptyViewLabel}"/>
-                                <Label Text="Nhấn '＋ Tạo phiên mới' để bắt đầu" Style="{StaticResource SubText}" HorizontalOptions="Center"/>
+                                <Label Text="Nhấn 'Tạo phiên mới' để bắt đầu" Style="{StaticResource SubText}" HorizontalOptions="Center"/>
                             </StackLayout>
                         </CollectionView.EmptyView>
                     </CollectionView>
                 </RefreshView>
             </Grid>
 
-            <!-- MODE 2: Active Session Detail -->
+            <!-- MODE 2: Active Session (shows purchase/sale orders) -->
             <Grid IsVisible="{Binding IsSessionActive}" RowDefinitions="Auto, *" Padding="24">
-
-                <!-- Session Header -->
-                <Grid Grid.Row="0" RowDefinitions="Auto, Auto" Margin="0,0,0,16">
-                    <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12">
+                <Grid Grid.Row="0" RowDefinitions="Auto, Auto" Margin="0,0,0,12">
+                    <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto, Auto, Auto, Auto" ColumnSpacing="10">
                         <Button Grid.Column="0" Text="← Quay lại" Command="{Binding CloseSessionCommand}"
-                                BackgroundColor="Transparent"
-                                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                                BackgroundColor="Transparent" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
                                 FontSize="14" Padding="0"/>
                         <Label Grid.Column="1" Text="{Binding CurrentSession.SessionDate, StringFormat='Phiên {0:dd/MM/yyyy HH:mm}'}"
-                               FontSize="20" FontAttributes="Bold" VerticalOptions="Center"
+                               FontSize="18" FontAttributes="Bold" VerticalOptions="Center"
                                TextColor="{AppThemeBinding Light={StaticResource TextHeading}, Dark={StaticResource TextHeadingDark}}"/>
-                        <Button Grid.Column="2" Text="✅ Hoàn tất" Command="{Binding CompleteSessionCommand}"
-                                Style="{StaticResource SuccessButton}" Padding="16,10" CornerRadius="12" FontSize="13"/>
+                        <Button Grid.Column="2" Text="📋 Tóm tắt" Command="{Binding ShowSessionSummaryCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#faf5ff, Dark=#3b0764}"
+                                TextColor="{AppThemeBinding Light=#7c3aed, Dark=#c4b5fd}"
+                                Padding="14,8" CornerRadius="10" FontSize="12"/>
+                        <Button Grid.Column="3" Text="📄 Xuất hóa đơn" Command="{Binding ShowExportMenuCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#dbeafe, Dark=#1e3a5f}"
+                                TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"
+                                Padding="14,8" CornerRadius="10" FontSize="12"/>
+                        <Button Grid.Column="4" Text="💾 Lưu" Command="{Binding SaveSessionCommand}"
+                                Style="{StaticResource SuccessButton}" Padding="14,8" CornerRadius="10" FontSize="12"/>
                     </Grid>
-
-                    <!-- Stats Bar -->
-                    <Grid Grid.Row="1" ColumnDefinitions="*, *, *" ColumnSpacing="12" Margin="0,12,0,0">
+                    <!-- Stats -->
+                    <Grid Grid.Row="1" ColumnDefinitions="*, *, *" ColumnSpacing="10" Margin="0,10,0,0">
                         <Border Grid.Column="0" StrokeShape="RoundRectangle 12" StrokeThickness="0"
-                                BackgroundColor="{AppThemeBinding Light=#fef2f2, Dark=#450a0a}" Padding="14,10">
+                                BackgroundColor="{AppThemeBinding Light=#fef2f2, Dark=#450a0a}" Padding="12,8">
                             <VerticalStackLayout Spacing="2">
-                                <Label Text="📥 Tổng mua" FontSize="11" TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
-                                <Label Text="{Binding SessionTotalPurchase, StringFormat='{0:N0} đ'}"
-                                       FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
+                                <Label Text="📥 Mua" FontSize="11" TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
+                                <Label Text="{Binding SessionTotalPurchase, StringFormat='{0:N0} đ'}" FontSize="15" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
                             </VerticalStackLayout>
                         </Border>
                         <Border Grid.Column="1" StrokeShape="RoundRectangle 12" StrokeThickness="0"
-                                BackgroundColor="{AppThemeBinding Light=#eff6ff, Dark=#172554}" Padding="14,10">
+                                BackgroundColor="{AppThemeBinding Light=#eff6ff, Dark=#172554}" Padding="12,8">
                             <VerticalStackLayout Spacing="2">
-                                <Label Text="📤 Tổng bán" FontSize="11" TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
-                                <Label Text="{Binding SessionTotalSales, StringFormat='{0:N0} đ'}"
-                                       FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
+                                <Label Text="📤 Bán" FontSize="11" TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
+                                <Label Text="{Binding SessionTotalSales, StringFormat='{0:N0} đ'}" FontSize="15" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
                             </VerticalStackLayout>
                         </Border>
                         <Border Grid.Column="2" StrokeShape="RoundRectangle 12" StrokeThickness="0"
-                                BackgroundColor="{AppThemeBinding Light=#f0fdf4, Dark=#052e16}" Padding="14,10">
+                                BackgroundColor="{AppThemeBinding Light=#f0fdf4, Dark=#052e16}" Padding="12,8">
                             <VerticalStackLayout Spacing="2">
-                                <Label Text="💰 Lợi nhuận" FontSize="11" TextColor="{AppThemeBinding Light=#16a34a, Dark=#86efac}"/>
-                                <Label Text="{Binding SessionProfit, StringFormat='{0:N0} đ'}"
-                                       FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#16a34a, Dark=#86efac}"/>
+                                <Label Text="💰 Lời" FontSize="11" TextColor="{AppThemeBinding Light=#16a34a, Dark=#86efac}"/>
+                                <Label Text="{Binding SessionProfit, StringFormat='{0:N0} đ'}" FontSize="15" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#16a34a, Dark=#86efac}"/>
                             </VerticalStackLayout>
                         </Border>
                     </Grid>
                 </Grid>
 
-                <!-- Orders split view -->
                 <ScrollView Grid.Row="1">
-                    <VerticalStackLayout Spacing="20">
-
-                        <!-- PURCHASE ORDERS -->
+                    <VerticalStackLayout Spacing="16">
+                        <!-- PURCHASE section -->
                         <Grid ColumnDefinitions="*, Auto">
                             <Label Grid.Column="0" Text="📥 Đơn MUA vào" FontSize="16" FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}" VerticalOptions="Center"/>
-                            <Button Grid.Column="1" Text="＋ Thêm đơn mua"
-                                    Command="{Binding ShowAddPurchaseCommand}"
+                            <Button Grid.Column="1" Text="＋ Thêm đơn mua" Command="{Binding StartAddPurchaseCommand}"
                                     BackgroundColor="{AppThemeBinding Light=#fee2e2, Dark=#450a0a}"
                                     TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"
                                     CornerRadius="10" Padding="14,8" FontSize="13"/>
                         </Grid>
-
                         <CollectionView ItemsSource="{Binding PurchaseOrders}">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:TradeOrder">
-                                    <Border Style="{StaticResource CardFrameFlat}" Padding="14,12" Margin="0,0,0,8">
-                                        <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="10">
-                                            <VerticalStackLayout Grid.Column="0" Spacing="3">
-                                                <Label Text="{Binding Partner.Name}" FontSize="14" FontAttributes="Bold"
+                                    <Border Style="{StaticResource CardFrameFlat}" Padding="14,10" Margin="0,0,0,6">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=EditOrderCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="*, Auto, Auto, Auto, Auto" ColumnSpacing="6">
+                                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                                <Label Text="{Binding DisplayPartnerName}" FontSize="14" FontAttributes="Bold"
                                                        TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}"/>
-                                                <Label Text="{Binding TotalAmount, StringFormat='{0:N0} đ'}"
-                                                       FontSize="13" TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
+                                                <Label Text="{Binding TotalAmount, StringFormat='{0:N0} đ'}" FontSize="13"
+                                                       TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
                                             </VerticalStackLayout>
-                                            <Label Grid.Column="1" Text="{Binding Note}" Style="{StaticResource SubText}" FontSize="11"
-                                                   VerticalOptions="Center" MaxLines="1"/>
-                                            <Button Grid.Column="2" Text="🗑️"
+                                            <Label Grid.Column="1" Text="{Binding Details.Count, StringFormat='{0} SP'}" Style="{StaticResource SubText}" FontSize="11" VerticalOptions="Center"/>
+                                            <Button Grid.Column="2" Text="✏️"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=EditOrderCommand}"
+                                                    CommandParameter="{Binding .}" BackgroundColor="Transparent" FontSize="14"
+                                                    WidthRequest="36" HeightRequest="36" Padding="0" ToolTipProperties.Text="Chỉnh sửa đơn"/>
+                                            <Button Grid.Column="3" Text="📄"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=ExportSingleOrderCommand}"
+                                                    CommandParameter="{Binding .}" BackgroundColor="Transparent" FontSize="14"
+                                                    WidthRequest="36" HeightRequest="36" Padding="0"/>
+                                            <Button Grid.Column="4" Text="🗑️"
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=RemoveOrderCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    BackgroundColor="Transparent" FontSize="14"
+                                                    CommandParameter="{Binding .}" BackgroundColor="Transparent" FontSize="14"
                                                     WidthRequest="36" HeightRequest="36" Padding="0"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                             <CollectionView.EmptyView>
-                                <Label Text="Chưa có đơn mua" Style="{StaticResource SubText}" Margin="8,4"/>
+                                <Label Text="  Chưa có đơn mua" Style="{StaticResource SubText}" Margin="4"/>
                             </CollectionView.EmptyView>
                         </CollectionView>
 
                         <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
 
-                        <!-- SALE ORDERS -->
+                        <!-- SALE section -->
                         <Grid ColumnDefinitions="*, Auto">
                             <Label Grid.Column="0" Text="📤 Đơn BÁN ra" FontSize="16" FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}" VerticalOptions="Center"/>
-                            <Button Grid.Column="1" Text="＋ Thêm đơn bán"
-                                    Command="{Binding ShowAddSaleCommand}"
+                            <Button Grid.Column="1" Text="＋ Thêm đơn bán" Command="{Binding StartAddSaleCommand}"
                                     BackgroundColor="{AppThemeBinding Light=#dbeafe, Dark=#172554}"
                                     TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"
                                     CornerRadius="10" Padding="14,8" FontSize="13"/>
                         </Grid>
-
                         <CollectionView ItemsSource="{Binding SaleOrders}">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:TradeOrder">
-                                    <Border Style="{StaticResource CardFrameFlat}" Padding="14,12" Margin="0,0,0,8">
-                                        <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="10">
-                                            <VerticalStackLayout Grid.Column="0" Spacing="3">
-                                                <Label Text="{Binding Partner.Name}" FontSize="14" FontAttributes="Bold"
+                                    <Border Style="{StaticResource CardFrameFlat}" Padding="14,10" Margin="0,0,0,6">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=EditOrderCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="*, Auto, Auto, Auto, Auto" ColumnSpacing="6">
+                                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                                <Label Text="{Binding DisplayPartnerName}" FontSize="14" FontAttributes="Bold"
                                                        TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}"/>
-                                                <Label Text="{Binding TotalAmount, StringFormat='{0:N0} đ'}"
-                                                       FontSize="13" TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
+                                                <Label Text="{Binding TotalAmount, StringFormat='{0:N0} đ'}" FontSize="13"
+                                                       TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
                                             </VerticalStackLayout>
-                                            <Label Grid.Column="1" Text="{Binding Note}" Style="{StaticResource SubText}" FontSize="11"
-                                                   VerticalOptions="Center" MaxLines="1"/>
-                                            <Button Grid.Column="2" Text="🗑️"
+                                            <Label Grid.Column="1" Text="{Binding Details.Count, StringFormat='{0} SP'}" Style="{StaticResource SubText}" FontSize="11" VerticalOptions="Center"/>
+                                            <Button Grid.Column="2" Text="✏️"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=EditOrderCommand}"
+                                                    CommandParameter="{Binding .}" BackgroundColor="Transparent" FontSize="14"
+                                                    WidthRequest="36" HeightRequest="36" Padding="0" ToolTipProperties.Text="Chỉnh sửa đơn"/>
+                                            <Button Grid.Column="3" Text="📄"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=ExportSingleOrderCommand}"
+                                                    CommandParameter="{Binding .}" BackgroundColor="Transparent" FontSize="14"
+                                                    WidthRequest="36" HeightRequest="36" Padding="0"/>
+                                            <Button Grid.Column="4" Text="🗑️"
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=RemoveOrderCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    BackgroundColor="Transparent" FontSize="14"
+                                                    CommandParameter="{Binding .}" BackgroundColor="Transparent" FontSize="14"
                                                     WidthRequest="36" HeightRequest="36" Padding="0"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                             <CollectionView.EmptyView>
-                                <Label Text="Chưa có đơn bán" Style="{StaticResource SubText}" Margin="8,4"/>
+                                <Label Text="  Chưa có đơn bán" Style="{StaticResource SubText}" Margin="4"/>
                             </CollectionView.EmptyView>
                         </CollectionView>
                     </VerticalStackLayout>
@@ -228,37 +231,62 @@
             </Grid>
         </Grid>
 
-        <!-- ═══ Create Session Modal ═══ -->
-        <Grid IsVisible="{Binding IsCreateSessionVisible}" InputTransparent="False" ZIndex="100">
+        <!-- ═══ LAYER 2: Partner Selection Modal ═══ -->
+        <Grid IsVisible="{Binding IsSelectingPartner}" InputTransparent="False" ZIndex="100">
             <BoxView Color="#80000000" InputTransparent="False">
                 <BoxView.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding CancelCreateSessionCommand}"/>
+                    <TapGestureRecognizer Command="{Binding CancelAddOrderCommand}"/>
                 </BoxView.GestureRecognizers>
             </BoxView>
             <Border Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#334155}" StrokeThickness="1"
-                    StrokeShape="RoundRectangle 24"
-                    BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
-                    Padding="44" MinimumWidthRequest="500" MaximumWidthRequest="600"
+                    StrokeShape="RoundRectangle 24" BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
+                    Padding="44" MinimumWidthRequest="500" MaximumWidthRequest="650"
                     HorizontalOptions="Center" VerticalOptions="Center">
-                <VerticalStackLayout Spacing="24">
-                    <Label Text="📊 Tạo phiên giao dịch mới" FontSize="20" FontAttributes="Bold"
+                <VerticalStackLayout Spacing="22">
+                    <Label Text="{Binding OrderTypeTitle}" FontSize="20" FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}"/>
                     <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+
+                    <!-- Direct name input (primary) -->
                     <VerticalStackLayout Spacing="8">
-                        <Label Text="Ghi chú (tùy chọn)" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
+                        <Label Text="{Binding PartnerLabel}" FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
                         <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
                                 StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
-                                HeightRequest="56" Padding="16,0">
-                            <Entry Placeholder="VD: Phiên sáng 14/03..." Text="{Binding NewSessionNote}"
-                                   IsSpellCheckEnabled="False" BackgroundColor="Transparent" FontSize="15" VerticalOptions="Center"/>
+                                MinimumHeightRequest="56" Padding="16,8">
+                            <Entry Placeholder="Nhập tên trực tiếp..." Text="{Binding PartnerNameText}"
+                                   IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
+                                   BackgroundColor="Transparent" FontSize="15" VerticalOptions="Center"
+                                   PlaceholderColor="{AppThemeBinding Light=#94a3b8, Dark=#475569}"/>
                         </Border>
                     </VerticalStackLayout>
+
+                    <!-- OR divider -->
+                    <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="12">
+                        <BoxView Grid.Column="0" HeightRequest="1" VerticalOptions="Center"
+                                 Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+                        <Label Grid.Column="1" Text="hoặc chọn đối tác cố định" FontSize="12"
+                               TextColor="{AppThemeBinding Light=#94a3b8, Dark=#64748b}" VerticalOptions="Center"/>
+                        <BoxView Grid.Column="2" HeightRequest="1" VerticalOptions="Center"
+                                 Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+                    </Grid>
+
+                    <!-- Fixed partner picker (secondary) -->
+                    <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
+                            StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                            MinimumHeightRequest="56" Padding="16,8">
+                        <Picker ItemsSource="{Binding AvailablePartners}" SelectedItem="{Binding SelectedPartner}"
+                                ItemDisplayBinding="{Binding Name}" Title="Chọn từ danh sách..."
+                                FontSize="15" BackgroundColor="Transparent"
+                                HorizontalOptions="Fill" VerticalOptions="Center"/>
+                    </Border>
+
                     <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12">
-                        <Button Grid.Column="0" Text="Hủy" Command="{Binding CancelCreateSessionCommand}"
+                        <Button Grid.Column="0" Text="Hủy" Command="{Binding CancelAddOrderCommand}"
                                 BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
                                 TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"
                                 CornerRadius="14" HeightRequest="50" Padding="28,0" FontSize="15"/>
-                        <Button Grid.Column="2" Text="📊 Tạo phiên" Command="{Binding CreateSessionCommand}"
+                        <Button Grid.Column="2" Text="Tiếp tục →" Command="{Binding ConfirmPartnerCommand}"
                                 Style="{StaticResource PrimaryButton}" CornerRadius="14" HeightRequest="50"
                                 Padding="32,0" FontSize="15" FontAttributes="Bold"/>
                     </Grid>
@@ -266,56 +294,161 @@
             </Border>
         </Grid>
 
-        <!-- ═══ Add Order Modal ═══ -->
-        <Grid IsVisible="{Binding IsAddOrderModalVisible}" InputTransparent="False" ZIndex="100">
+        <!-- ═══ LAYER 3: Add Order - POS-like Product Grid + Cart ═══ -->
+        <Grid IsVisible="{Binding IsAddingOrder}" ZIndex="90"
+              BackgroundColor="{AppThemeBinding Light={StaticResource PageBg}, Dark={StaticResource PageBgDark}}">
+
+            <Grid ColumnDefinitions="*, 380">
+                <!-- LEFT: Product Grid -->
+                <Grid Grid.Column="0" RowDefinitions="Auto, *" Padding="24,20">
+                    <!-- Header -->
+                    <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Margin="0,0,0,14">
+                        <Button Grid.Column="0" Text="← Quay lại" Command="{Binding CancelAddOrderCommand}"
+                                BackgroundColor="Transparent" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                                FontSize="14" Padding="0"/>
+                        <Label Grid.Column="1" Text="{Binding OrderTypeTitle}" FontSize="18" FontAttributes="Bold"
+                               VerticalOptions="Center" HorizontalOptions="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource TextHeading}, Dark={StaticResource TextHeadingDark}}"/>
+                        <Label Grid.Column="2" Text="{Binding SelectedPartner.Name, StringFormat='Đối tác: {0}'}"
+                               Style="{StaticResource SubText}" FontSize="13" VerticalOptions="Center"/>
+                    </Grid>
+
+                    <!-- Products -->
+                    <CollectionView Grid.Row="1" ItemsSource="{Binding AvailableProducts}">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="3" HorizontalItemSpacing="12" VerticalItemSpacing="12"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Product">
+                                <Border Style="{StaticResource CardFrameFlat}" Padding="14">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=AddProductToOrderCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label Text="🐟" FontSize="28" HorizontalOptions="Center"/>
+                                        <Label Text="{Binding Name}" FontSize="14" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}"
+                                               LineBreakMode="TailTruncation" MaxLines="2"/>
+                                        <Label FontSize="12" HorizontalTextAlignment="Center"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}">
+                                            <Label.Text>
+                                                <MultiBinding StringFormat="{}{0:N0} đ/{1}">
+                                                    <Binding Path="Price"/>
+                                                    <Binding Path="Unit"/>
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+
+                <!-- RIGHT: Cart Sidebar -->
+                <Border Grid.Column="1" StrokeThickness="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource CardBg}, Dark={StaticResource CardBgDark}}">
+                    <Grid RowDefinitions="Auto, *, Auto">
+                        <VerticalStackLayout Grid.Row="0" Padding="20,18" Spacing="4"
+                                             BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
+                            <Label Text="🛒 Giỏ hàng tạm" FontSize="18" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="{Binding PartnerNameText}" FontSize="12" TextColor="#bae6fd"/>
+                        </VerticalStackLayout>
+
+                        <CollectionView Grid.Row="1" ItemsSource="{Binding PendingItems}" Margin="0,5,0,0">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="viewmodels:PendingTradeItem">
+                                    <Grid Padding="16,8" ColumnDefinitions="*, Auto, Auto" ColumnSpacing="6">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                            <Label Text="{Binding Product.Name}" FontSize="13" FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource TextPrimaryDark}}"
+                                                   LineBreakMode="TailTruncation" MaxLines="1"/>
+                                            <Label FontSize="11" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="{}{0:G} {1} × {2:N0} VNĐ/{3}">
+                                                        <Binding Path="Quantity"/>
+                                                        <Binding Path="Unit"/>
+                                                        <Binding Path="DisplayUnitPrice"/>
+                                                        <Binding Path="Unit"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                            <Label Text="{Binding SubTotal, StringFormat='{0:N0} VNĐ'}" Style="{StaticResource PriceLabel}" FontSize="12"/>
+                                        </VerticalStackLayout>
+                                        <Button Grid.Column="2" Text="✕"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=RemovePendingItemCommand}"
+                                                CommandParameter="{Binding .}" BackgroundColor="Transparent"
+                                                TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                FontSize="13" WidthRequest="30" HeightRequest="30" Padding="0"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8" Padding="20">
+                                    <Label Text="🛒" FontSize="36" HorizontalOptions="Center"/>
+                                    <Label Text="Nhấn sản phẩm để thêm" Style="{StaticResource SubText}" HorizontalOptions="Center"/>
+                                </StackLayout>
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+
+                        <VerticalStackLayout Grid.Row="2" Spacing="12" Padding="20,14">
+                            <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource CardBorder}, Dark={StaticResource CardBorderDark}}"/>
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Grid.Column="0" Text="TỔNG" FontSize="16" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource TextHeading}, Dark={StaticResource TextHeadingDark}}"
+                                       VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="{Binding PendingTotal, StringFormat='{0:N0} VNĐ'}"
+                                       FontSize="20" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}"
+                                       VerticalOptions="Center"/>
+                            </Grid>
+                            <Button Text="💾 Xác nhận đơn hàng" Command="{Binding ConfirmOrderCommand}"
+                                    Style="{StaticResource SuccessButton}" CornerRadius="14" HeightRequest="52"
+                                    FontSize="15" FontAttributes="Bold"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ═══ LAYER 4: Item Quantity/Price Input Modal ═══ -->
+        <Grid IsVisible="{Binding IsItemModalVisible}" InputTransparent="False" ZIndex="110">
             <BoxView Color="#80000000" InputTransparent="False">
                 <BoxView.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding CancelAddOrderCommand}"/>
+                    <TapGestureRecognizer Command="{Binding CancelItemModalCommand}"/>
                 </BoxView.GestureRecognizers>
             </BoxView>
             <Border Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#334155}" StrokeThickness="1"
-                    StrokeShape="RoundRectangle 24"
-                    BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
-                    Padding="44" MinimumWidthRequest="600" MaximumWidthRequest="750"
+                    StrokeShape="RoundRectangle 24" BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
+                    Padding="44" MinimumWidthRequest="550" MaximumWidthRequest="700"
                     HorizontalOptions="Center" VerticalOptions="Center">
                 <VerticalStackLayout Spacing="22">
-                    <!-- Header -->
-                    <Grid ColumnDefinitions="*, Auto">
-                        <Label Grid.Column="0" Text="{Binding ModalTitle}" FontSize="20" FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}"/>
-                        <Button Grid.Column="1" Text="✕" Command="{Binding CancelAddOrderCommand}"
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Border Grid.Column="0" StrokeShape="RoundRectangle 14" StrokeThickness="0"
+                                BackgroundColor="{AppThemeBinding Light=#ecfdf5, Dark=#064e3b}"
+                                WidthRequest="48" HeightRequest="48" Padding="0">
+                            <Label Text="📦" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="14,0,0,0" VerticalOptions="Center">
+                            <Label Text="{Binding PendingProduct.Name}" FontSize="18" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}" LineBreakMode="TailTruncation" MaxLines="1"/>
+                            <Label FontSize="12" TextColor="{AppThemeBinding Light=#64748b, Dark=#94a3b8}">
+                                <Label.Text>
+                                    <MultiBinding StringFormat="Giá tham khảo: {0:N0} đ/{1}">
+                                        <Binding Path="PendingProduct.Price"/>
+                                        <Binding Path="PendingProduct.Unit"/>
+                                    </MultiBinding>
+                                </Label.Text>
+                            </Label>
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="✕" Command="{Binding CancelItemModalCommand}"
                                 BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
                                 TextColor="{AppThemeBinding Light=#94a3b8, Dark=#64748b}"
                                 FontSize="15" CornerRadius="22" WidthRequest="40" HeightRequest="40" Padding="0"/>
                     </Grid>
-
                     <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
-
-                    <!-- Partner Picker -->
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="{Binding PartnerLabel}" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
-                        <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
-                                StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
-                                MinimumHeightRequest="56" Padding="16,8">
-                            <Picker ItemsSource="{Binding AvailablePartners}" SelectedItem="{Binding SelectedPartner}"
-                                    ItemDisplayBinding="{Binding Name}" FontSize="15" BackgroundColor="Transparent"
-                                    HorizontalOptions="Fill" VerticalOptions="Center"/>
-                        </Border>
-                    </VerticalStackLayout>
-
-                    <!-- Product Picker -->
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="Sản phẩm" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
-                        <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
-                                StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
-                                MinimumHeightRequest="56" Padding="16,8">
-                            <Picker ItemsSource="{Binding AvailableProducts}" SelectedItem="{Binding SelectedProduct}"
-                                    ItemDisplayBinding="{Binding Name}" FontSize="15" BackgroundColor="Transparent"
-                                    HorizontalOptions="Fill" VerticalOptions="Center"/>
-                        </Border>
-                    </VerticalStackLayout>
-
-                    <!-- Quantity + Unit + Price -->
                     <Grid ColumnDefinitions="2*, *, 2*" ColumnSpacing="14">
                         <VerticalStackLayout Grid.Column="0" Spacing="8">
                             <Label Text="Số lượng" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
@@ -345,32 +478,264 @@
                             </Border>
                         </VerticalStackLayout>
                     </Grid>
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12">
+                        <Button Grid.Column="0" Text="Hủy" Command="{Binding CancelItemModalCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
+                                TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"
+                                CornerRadius="14" HeightRequest="50" Padding="28,0" FontSize="15"/>
+                        <Button Grid.Column="2" Text="🛒 Thêm vào giỏ" Command="{Binding ConfirmItemCommand}"
+                                Style="{StaticResource SuccessButton}" CornerRadius="14" HeightRequest="50"
+                                Padding="32,0" FontSize="15" FontAttributes="Bold"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
 
-                    <!-- Note -->
+        <!-- ═══ LAYER 5: Create Session Modal ═══ -->
+        <Grid IsVisible="{Binding IsCreateSessionVisible}" InputTransparent="False" ZIndex="100">
+            <BoxView Color="#80000000" InputTransparent="False">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CancelCreateSessionCommand}"/>
+                </BoxView.GestureRecognizers>
+            </BoxView>
+            <Border Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#334155}" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24" BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
+                    Padding="44" MinimumWidthRequest="500" MaximumWidthRequest="600"
+                    HorizontalOptions="Center" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="24">
+                    <Label Text="📊 Tạo phiên giao dịch mới" FontSize="20" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}"/>
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
                     <VerticalStackLayout Spacing="8">
                         <Label Text="Ghi chú (tùy chọn)" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"/>
                         <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#475569}"
                                 StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
                                 HeightRequest="56" Padding="16,0">
-                            <Entry Placeholder="Ghi chú..." Text="{Binding PendingNote}"
+                            <Entry Placeholder="VD: Phiên sáng 14/03..." Text="{Binding NewSessionNote}"
                                    IsSpellCheckEnabled="False" BackgroundColor="Transparent" FontSize="15" VerticalOptions="Center"/>
                         </Border>
                     </VerticalStackLayout>
-
-                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
-
-                    <!-- Buttons -->
                     <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12">
-                        <Button Grid.Column="0" Text="Hủy" Command="{Binding CancelAddOrderCommand}"
+                        <Button Grid.Column="0" Text="Hủy" Command="{Binding CancelCreateSessionCommand}"
                                 BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
                                 TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"
                                 CornerRadius="14" HeightRequest="50" Padding="28,0" FontSize="15"/>
-                        <Button Grid.Column="2" Text="💾 Thêm đơn" Command="{Binding ConfirmAddOrderCommand}"
-                                Style="{StaticResource SuccessButton}" CornerRadius="14" HeightRequest="50"
-                                Padding="36,0" FontSize="15" FontAttributes="Bold"/>
+                        <Button Grid.Column="2" Text="📊 Tạo phiên" Command="{Binding CreateSessionCommand}"
+                                Style="{StaticResource PrimaryButton}" CornerRadius="14" HeightRequest="50"
+                                Padding="32,0" FontSize="15" FontAttributes="Bold"/>
                     </Grid>
                 </VerticalStackLayout>
             </Border>
         </Grid>
+
+        <!-- ═══ LAYER 6: Export Menu Modal ═══ -->
+        <Grid IsVisible="{Binding IsExportMenuVisible}" InputTransparent="False" ZIndex="120">
+            <BoxView Color="#80000000" InputTransparent="False">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding HideExportMenuCommand}"/>
+                </BoxView.GestureRecognizers>
+            </BoxView>
+            <Border Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#334155}" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24" BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
+                    Padding="36" MinimumWidthRequest="400" MaximumWidthRequest="500"
+                    HorizontalOptions="Center" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="📄 Xuất hóa đơn" FontSize="20" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}"/>
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+
+                    <Button Text="📋 Xuất tất cả đơn" Command="{Binding ExportAllCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#f0fdf4, Dark=#052e16}"
+                            TextColor="{AppThemeBinding Light=#16a34a, Dark=#86efac}"
+                            CornerRadius="14" HeightRequest="50" FontSize="15" Padding="20,0"
+                            HorizontalOptions="Fill"/>
+                    <Button Text="📥 Xuất đơn mua" Command="{Binding ExportPurchasesCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#fef2f2, Dark=#450a0a}"
+                            TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"
+                            CornerRadius="14" HeightRequest="50" FontSize="15" Padding="20,0"
+                            HorizontalOptions="Fill"/>
+                    <Button Text="📤 Xuất đơn bán" Command="{Binding ExportSalesCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#eff6ff, Dark=#172554}"
+                            TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"
+                            CornerRadius="14" HeightRequest="50" FontSize="15" Padding="20,0"
+                            HorizontalOptions="Fill"/>
+
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+                    <Button Text="Đóng" Command="{Binding HideExportMenuCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
+                            TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"
+                            CornerRadius="14" HeightRequest="50" FontSize="15" Padding="20,0"
+                            HorizontalOptions="Fill"/>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ═══ LAYER 7: Partner Filter Modal ═══ -->
+        <Grid IsVisible="{Binding IsPartnerFilterVisible}" InputTransparent="False" ZIndex="130">
+            <BoxView Color="#80000000" InputTransparent="False">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding HidePartnerFilterCommand}"/>
+                </BoxView.GestureRecognizers>
+            </BoxView>
+            <Border Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#334155}" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24" BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
+                    Padding="28" MinimumWidthRequest="420" MaximumWidthRequest="520" MaximumHeightRequest="500"
+                    HorizontalOptions="Center" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="{Binding PartnerFilterTitle}" FontSize="18" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}"/>
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+
+                    <CollectionView ItemsSource="{Binding FilterPartners}" SelectionMode="None" MaximumHeightRequest="350">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:PartnerFilterItem">
+                                <Border StrokeShape="RoundRectangle 12" StrokeThickness="1"
+                                        Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"
+                                        BackgroundColor="{AppThemeBinding Light=#f8fafc, Dark=#0f172a}"
+                                        Padding="14,10" Margin="0,0,0,6">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TradingSessionViewModel}}, Path=SelectPartnerFilterCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                            <Label Text="{Binding DisplayName}" FontSize="14" FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}"/>
+                                            <Label FontSize="11"
+                                                   TextColor="{AppThemeBinding Light=#64748b, Dark=#94a3b8}">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="{}{0} đơn — {1:N0} đ">
+                                                        <Binding Path="OrderCount"/>
+                                                        <Binding Path="TotalAmount"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="1" Text="→" FontSize="18" VerticalOptions="Center"
+                                               TextColor="{AppThemeBinding Light=#94a3b8, Dark=#475569}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Button Text="Đóng" Command="{Binding HidePartnerFilterCommand}"
+                            BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
+                            TextColor="{AppThemeBinding Light=#475569, Dark=#cbd5e1}"
+                            CornerRadius="14" HeightRequest="44" FontSize="14" Padding="20,0"
+                            HorizontalOptions="Fill"/>
+                </VerticalStackLayout>
+        </Border>
+        </Grid>
+
+        <!-- ═══ Session Summary Modal ═══ -->
+        <Grid IsVisible="{Binding IsSummaryVisible}" InputTransparent="False" ZIndex="145">
+            <BoxView Color="#80000000" InputTransparent="False">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CloseSummaryCommand}"/>
+                </BoxView.GestureRecognizers>
+            </BoxView>
+            <Border Stroke="{AppThemeBinding Light=#e2e8f0, Dark=#334155}" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24" BackgroundColor="{AppThemeBinding Light=#ffffff, Dark=#1e293b}"
+                    Padding="28" MinimumWidthRequest="550" MaximumWidthRequest="750" MaximumHeightRequest="650"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    Shadow="{OnPlatform Default={Shadow Brush=#30000000, Offset='0,12', Radius=40, Opacity=0.6}}">
+                <VerticalStackLayout Spacing="14">
+                    <!-- Header -->
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Label Grid.Column="0" Text="📋" FontSize="22" VerticalOptions="Center"/>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="10,0,0,0">
+                            <Label Text="Tóm tắt phiên giao dịch" FontSize="20" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}"/>
+                            <Label Text="{Binding SummaryUpdateTime, StringFormat='Cập nhật: {0}'}" FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#94a3b8, Dark=#64748b}"/>
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="✕" Command="{Binding CloseSummaryCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#334155}"
+                                TextColor="{AppThemeBinding Light=#94a3b8, Dark=#64748b}"
+                                FontSize="15" CornerRadius="22" WidthRequest="40" HeightRequest="40" Padding="0"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+
+                    <!-- Table Header -->
+                    <Grid ColumnDefinitions="*, 80, 80, 100, 100, 80" ColumnSpacing="6" Padding="4,0">
+                        <Label Grid.Column="0" Text="Sản phẩm" FontSize="11" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#64748b, Dark=#94a3b8}"/>
+                        <Label Grid.Column="1" Text="Mua (kg)" FontSize="11" FontAttributes="Bold" HorizontalTextAlignment="End"
+                               TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
+                        <Label Grid.Column="2" Text="Bán (kg)" FontSize="11" FontAttributes="Bold" HorizontalTextAlignment="End"
+                               TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
+                        <Label Grid.Column="3" Text="Chi mua" FontSize="11" FontAttributes="Bold" HorizontalTextAlignment="End"
+                               TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
+                        <Label Grid.Column="4" Text="Thu bán" FontSize="11" FontAttributes="Bold" HorizontalTextAlignment="End"
+                               TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
+                        <Label Grid.Column="5" Text="Còn (kg)" FontSize="11" FontAttributes="Bold" HorizontalTextAlignment="End"
+                               TextColor="{AppThemeBinding Light=#7c3aed, Dark=#c4b5fd}"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#f1f5f9, Dark=#1e293b}"/>
+
+                    <!-- Items -->
+                    <CollectionView ItemsSource="{Binding SummaryItems}" MaximumHeightRequest="340">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SessionSummaryItem">
+                                <Grid ColumnDefinitions="*, 80, 80, 100, 100, 80" ColumnSpacing="6" Padding="4,6">
+                                    <Label Grid.Column="0" Text="{Binding ProductName}" FontSize="13" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#0f172a, Dark=#f1f5f9}" LineBreakMode="TailTruncation"/>
+                                    <Label Grid.Column="1" Text="{Binding PurchaseQtyKg, StringFormat='{0:N0}'}" FontSize="12"
+                                           HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
+                                    <Label Grid.Column="2" Text="{Binding SalesQtyKg, StringFormat='{0:N0}'}" FontSize="12"
+                                           HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
+                                    <Label Grid.Column="3" Text="{Binding PurchaseAmount, StringFormat='{0:N0}'}" FontSize="12"
+                                           HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
+                                    <Label Grid.Column="4" Text="{Binding SalesAmount, StringFormat='{0:N0}'}" FontSize="12"
+                                           HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
+                                    <Label Grid.Column="5" FontSize="12" FontAttributes="Bold" HorizontalTextAlignment="End"
+                                           TextColor="{AppThemeBinding Light=#7c3aed, Dark=#c4b5fd}">
+                                        <Label.Text>
+                                            <Binding Path="RemainingQtyKg" StringFormat="{}{0:N0}"/>
+                                        </Label.Text>
+                                    </Label>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e2e8f0, Dark=#334155}"/>
+
+                    <!-- Totals -->
+                    <Grid ColumnDefinitions="*, *, *" ColumnSpacing="12">
+                        <Border Grid.Column="0" StrokeShape="RoundRectangle 10" StrokeThickness="0"
+                                BackgroundColor="{AppThemeBinding Light=#fef2f2, Dark=#450a0a}" Padding="12,8">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Tổng chi mua" FontSize="10" TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
+                                <Label Text="{Binding SummaryTotalPurchase, StringFormat='{0:N0} đ'}" FontSize="14" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#dc2626, Dark=#fca5a5}"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" StrokeShape="RoundRectangle 10" StrokeThickness="0"
+                                BackgroundColor="{AppThemeBinding Light=#eff6ff, Dark=#172554}" Padding="12,8">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Tổng thu bán" FontSize="10" TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
+                                <Label Text="{Binding SummaryTotalSales, StringFormat='{0:N0} đ'}" FontSize="14" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#2563eb, Dark=#93c5fd}"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="2" StrokeShape="RoundRectangle 10" StrokeThickness="0"
+                                BackgroundColor="{AppThemeBinding Light=#f0fdf4, Dark=#052e16}" Padding="12,8">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Lợi nhuận" FontSize="10" TextColor="{AppThemeBinding Light=#16a34a, Dark=#86efac}"/>
+                                <Label Text="{Binding SummaryTotalProfit, StringFormat='{0:N0} đ'}" FontSize="14" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#16a34a, Dark=#86efac}"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
     </Grid>
 </ContentPage>

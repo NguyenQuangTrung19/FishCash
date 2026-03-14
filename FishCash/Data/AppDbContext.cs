@@ -70,10 +70,19 @@ public class AppDbContext : DbContext
             .WithOne(to => to.TradingSession)
             .HasForeignKey(to => to.TradingSessionId);
 
+        // Ignore computed property (not a database column)
+        modelBuilder.Entity<TradingSession>()
+            .Ignore(ts => ts.Profit);
+
         modelBuilder.Entity<Partner>()
             .HasMany(p => p.TradeOrders)
             .WithOne(to => to.Partner)
-            .HasForeignKey(to => to.PartnerId);
+            .HasForeignKey(to => to.PartnerId)
+            .IsRequired(false);
+
+        // Ignore computed property
+        modelBuilder.Entity<TradeOrder>()
+            .Ignore(to => to.DisplayPartnerName);
 
         modelBuilder.Entity<TradeOrder>()
             .HasMany(to => to.Details)
@@ -104,10 +113,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<TradeOrder>()
             .Property(o => o.OrderType)
-            .HasConversion<string>();
-
-        modelBuilder.Entity<TradingSession>()
-            .Property(s => s.Status)
             .HasConversion<string>();
 
         // ═══ Decimal precision ═══

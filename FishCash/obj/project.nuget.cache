@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "oLTsr5aPcTM=",
+  "dgSpecHash": "aPG2ccqaNOk=",
   "success": true,
   "projectFilePath": "C:\\Users\\ACER\\Documents\\Workspace\\Projects\\FishCash\\FishCash\\FishCash.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\ACER\\.nuget\\packages\\communitytoolkit.maui\\9.1.1\\communitytoolkit.maui.9.1.1.nupkg.sha512",
+    "C:\\Users\\ACER\\.nuget\\packages\\communitytoolkit.maui.core\\9.1.1\\communitytoolkit.maui.core.9.1.1.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\googlegson\\2.13.0.1\\googlegson.2.13.0.1.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\microsoft.data.sqlite.core\\9.0.2\\microsoft.data.sqlite.core.9.0.2.nupkg.sha512",
@@ -40,6 +42,7 @@
     "C:\\Users\\ACER\\.nuget\\packages\\microsoft.web.webview2\\1.0.3179.45\\microsoft.web.webview2.1.0.3179.45.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\microsoft.windows.sdk.buildtools\\10.0.22621.756\\microsoft.windows.sdk.buildtools.10.0.22621.756.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\microsoft.windowsappsdk\\1.7.250513003\\microsoft.windowsappsdk.1.7.250513003.nupkg.sha512",
+    "C:\\Users\\ACER\\.nuget\\packages\\questpdf\\2026.2.3\\questpdf.2026.2.3.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.10\\sqlitepclraw.bundle_e_sqlite3.2.1.10.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\sqlitepclraw.core\\2.1.10\\sqlitepclraw.core.2.1.10.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.10\\sqlitepclraw.lib.e_sqlite3.2.1.10.nupkg.sha512",
@@ -51,6 +54,7 @@
     "C:\\Users\\ACER\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.5.2\\system.runtime.compilerservices.unsafe.4.5.2.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\system.runtime.interopservices.nfloat.internal\\6.0.1\\system.runtime.interopservices.nfloat.internal.6.0.1.nupkg.sha512",
+    "C:\\Users\\ACER\\.nuget\\packages\\system.speech\\8.0.0\\system.speech.8.0.0.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\system.text.json\\9.0.2\\system.text.json.9.0.2.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\xamarin.android.glide\\4.16.0.12\\xamarin.android.glide.4.16.0.12.nupkg.sha512",
     "C:\\Users\\ACER\\.nuget\\packages\\xamarin.android.glide.annotations\\4.16.0.12\\xamarin.android.glide.annotations.4.16.0.12.nupkg.sha512",

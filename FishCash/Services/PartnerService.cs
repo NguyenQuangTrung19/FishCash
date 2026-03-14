@@ -10,12 +10,12 @@ namespace FishCash.Services;
 /// </summary>
 public class PartnerService : IPartnerService
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
     private readonly ILogger<PartnerService> _logger;
 
-    public PartnerService(AppDbContext context, ILogger<PartnerService> logger)
+    public PartnerService(IDbContextFactory<AppDbContext> contextFactory, ILogger<PartnerService> logger)
     {
-        _context = context;
+        _contextFactory = contextFactory;
         _logger = logger;
     }
 
@@ -23,7 +23,8 @@ public class PartnerService : IPartnerService
     {
         try
         {
-            var query = _context.Partners.Where(p => p.IsActive);
+            using var context = _contextFactory.CreateDbContext();
+            var query = context.Partners.Where(p => p.IsActive);
             if (filterType.HasValue)
                 query = query.Where(p => p.PartnerType == filterType.Value);
 
@@ -40,7 +41,8 @@ public class PartnerService : IPartnerService
     {
         try
         {
-            return await _context.Partners.FindAsync(id);
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Partners.FindAsync(id);
         }
         catch (Exception ex)
         {
@@ -53,8 +55,9 @@ public class PartnerService : IPartnerService
     {
         try
         {
-            _context.Partners.Add(partner);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.Partners.Add(partner);
+            await context.SaveChangesAsync();
             _logger.LogInformation("Partner added: {Name} ({Type})", partner.Name, partner.PartnerType);
             return partner;
         }
@@ -69,8 +72,9 @@ public class PartnerService : IPartnerService
     {
         try
         {
-            _context.Partners.Update(partner);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.Partners.Update(partner);
+            await context.SaveChangesAsync();
             _logger.LogInformation("Partner updated: {Name}", partner.Name);
         }
         catch (Exception ex)
@@ -84,11 +88,12 @@ public class PartnerService : IPartnerService
     {
         try
         {
-            var partner = await _context.Partners.FindAsync(id);
+            using var context = _contextFactory.CreateDbContext();
+            var partner = await context.Partners.FindAsync(id);
             if (partner != null)
             {
                 partner.IsActive = false; // Soft delete
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 _logger.LogInformation("Partner soft-deleted: {Name}", partner.Name);
             }
         }

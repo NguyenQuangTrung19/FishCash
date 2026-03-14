@@ -9,10 +9,12 @@
     ".NETCoreApp,Version=v9.0/win10-x64": {
       "FishCash/1.0": {
         "dependencies": {
+          "CommunityToolkit.Maui": "9.1.1",
           "CommunityToolkit.Mvvm": "8.4.0",
           "Microsoft.EntityFrameworkCore.Sqlite": "9.0.2",
           "Microsoft.Extensions.Logging.Debug": "9.0.5",
           "Microsoft.Maui.Controls": "9.0.82",
+          "QuestPDF": "2026.2.3",
           "Microsoft.Web.WebView2.Core.Projection": "1.0.3179.45",
           "runtimepack.Microsoft.Windows.SDK.NET.Ref": "10.0.19041.57"
         },
@@ -29,6 +31,31 @@
           "WinRT.Runtime.dll": {
             "assemblyVersion": "2.2.0.0",
             "fileVersion": "2.2.0.48161"
+          }
+        }
+      },
+      "CommunityToolkit.Maui/9.1.1": {
+        "dependencies": {
+          "CommunityToolkit.Maui.Core": "9.1.1",
+          "Microsoft.Maui.Controls": "9.0.82"
+        },
+        "runtime": {
+          "lib/net8.0-windows10.0.19041/CommunityToolkit.Maui.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "CommunityToolkit.Maui.Core/9.1.1": {
+        "dependencies": {
+          "Microsoft.Maui.Core": "9.0.82",
+          "Microsoft.Maui.Essentials": "9.0.82",
+          "System.Speech": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0-windows10.0.19041/CommunityToolkit.Maui.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
@@ -603,6 +630,34 @@
           }
         }
       },
+      "QuestPDF/2026.2.3": {
+        "runtime": {
+          "lib/net8.0/QuestPDF.dll": {
+            "assemblyVersion": "2026.2.3.0",
+            "fileVersion": "2026.2.3.0"
+          }
+        },
+        "native": {
+          "runtimes/win-x64/native/QuestPdfSkia.dll": {
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/libgcc_s_seh-1.dll": {
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/libstdc++-6.dll": {
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/libwinpthread-1.dll": {
+            "fileVersion": "1.0.0.0"
+          },
+          "runtimes/win-x64/native/qpdf.dll": {
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/zlib1.dll": {
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
       "SQLitePCLRaw.bundle_e_sqlite3/2.1.10": {
         "dependencies": {
           "SQLitePCLRaw.lib.e_sqlite3": "2.1.10",
@@ -645,6 +700,14 @@
         }
       },
       "System.Memory/4.5.3": {},
+      "System.Speech/8.0.0": {
+        "runtime": {
+          "runtimes/win/lib/net8.0/System.Speech.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.53103"
+          }
+        }
+      },
       "System.Text.Json/9.0.2": {},
       "Microsoft.Web.WebView2.Core.Projection/1.0.3179.45": {
         "runtime": {
@@ -666,6 +729,20 @@
       "type": "runtimepack",
       "serviceable": false,
       "sha512": ""
+    },
+    "CommunityToolkit.Maui/9.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vDFIMhs/NRKEaHrrxq3AR3qEnfc0L6nno3/ZEFRUctDdwcYKNfmx8aof1lj8++dX+56c282SLHyuCnN6eH2Mpg==",
+      "path": "communitytoolkit.maui/9.1.1",
+      "hashPath": "communitytoolkit.maui.9.1.1.nupkg.sha512"
+    },
+    "CommunityToolkit.Maui.Core/9.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2O5bgBnwYLKXUMSA4a0hd3ildtr9t5Rw109y7Lz0udnX4C9JrW8Xi1mLDuUcNmK+U37gulhJGLb2tCMc+cbo3w==",
+      "path": "communitytoolkit.maui.core/9.1.1",
+      "hashPath": "communitytoolkit.maui.core.9.1.1.nupkg.sha512"
     },
     "CommunityToolkit.Mvvm/8.4.0": {
       "type": "package",
@@ -905,6 +982,13 @@
       "path": "microsoft.windowsappsdk/1.7.250513003",
       "hashPath": "microsoft.windowsappsdk.1.7.250513003.nupkg.sha512"
     },
+    "QuestPDF/2026.2.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-el20n2otRqY6AXsijlwPcTf12A54vm2KucQZ67k+9N5htrzfsXaBxh+/gU44HhTS4kmRFdYerY6WE47ybHhFYA==",
+      "path": "questpdf/2026.2.3",
+      "hashPath": "questpdf.2026.2.3.nupkg.sha512"
+    },
     "SQLitePCLRaw.bundle_e_sqlite3/2.1.10": {
       "type": "package",
       "serviceable": true,
@@ -939,6 +1023,13 @@
       "sha512": "sha512-3oDzvc/zzetpTKWMShs1AADwZjQ/36HnsufHRPcOjyRAAMLDlu2iD33MBI2opxnezcVUtXyqDXXjoFMOU9c7SA==",
       "path": "system.memory/4.5.3",
       "hashPath": "system.memory.4.5.3.nupkg.sha512"
+    },
+    "System.Speech/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-CNuiA6vb95Oe5PRjClZEBiaju31vwB8OIeCgeSBXyZL6+MS4RVVB2X/C11z0xCkooHE3Vy91nM2z76emIzR+sg==",
+      "path": "system.speech/8.0.0",
+      "hashPath": "system.speech.8.0.0.nupkg.sha512"
     },
     "System.Text.Json/9.0.2": {
       "type": "package",

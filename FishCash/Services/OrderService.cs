@@ -10,12 +10,12 @@ namespace FishCash.Services;
 /// </summary>
 public class OrderService : IOrderService
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
     private readonly ILogger<OrderService> _logger;
 
-    public OrderService(AppDbContext context, ILogger<OrderService> logger)
+    public OrderService(IDbContextFactory<AppDbContext> contextFactory, ILogger<OrderService> logger)
     {
-        _context = context;
+        _contextFactory = contextFactory;
         _logger = logger;
     }
 
@@ -23,6 +23,7 @@ public class OrderService : IOrderService
     {
         try
         {
+            using var context = _contextFactory.CreateDbContext();
             var totalAmount = details.Sum(d => d.SubTotal);
             
             var order = new Order
@@ -49,8 +50,8 @@ public class OrderService : IOrderService
                 order.OrderDetails.Add(detail);
             }
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            context.Orders.Add(order);
+            await context.SaveChangesAsync();
 
             _logger.LogInformation("Order created: #{Id}, Total: {Amount}, Method: {Method}", 
                 order.Id, totalAmount, paymentMethod);
@@ -67,7 +68,8 @@ public class OrderService : IOrderService
     {
         try
         {
-            return await _context.Orders
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Orders
                 .Where(o => o.Status == OrderStatus.Completed)
                 .SumAsync(o => o.TotalAmount);
         }
@@ -82,7 +84,8 @@ public class OrderService : IOrderService
     {
         try
         {
-            return await _context.Orders.CountAsync();
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Orders.CountAsync();
         }
         catch (Exception ex)
         {
@@ -95,7 +98,8 @@ public class OrderService : IOrderService
     {
         try
         {
-            return (int)await _context.OrderDetails.SumAsync(d => d.Quantity);
+            using var context = _contextFactory.CreateDbContext();
+            return (int)await context.OrderDetails.SumAsync(d => d.Quantity);
         }
         catch (Exception ex)
         {
@@ -108,7 +112,8 @@ public class OrderService : IOrderService
     {
         try
         {
-            return await _context.Orders
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Orders
                 .Include(o => o.OrderDetails)
                     .ThenInclude(d => d.Product)
                 .OrderByDescending(o => o.OrderDate)

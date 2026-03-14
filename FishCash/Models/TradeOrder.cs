@@ -4,7 +4,7 @@ namespace FishCash.Models;
 
 /// <summary>
 /// Represents a purchase or sale order within a trading session.
-/// Each order is linked to one partner (supplier or buyer).
+/// Each order can be linked to an existing partner OR have a typed-in partner name.
 /// </summary>
 public class TradeOrder
 {
@@ -13,8 +13,18 @@ public class TradeOrder
     public int TradingSessionId { get; set; }
     public TradingSession? TradingSession { get; set; }
 
-    public int PartnerId { get; set; }
+    // Nullable: if user types partner name directly, PartnerId is null
+    public int? PartnerId { get; set; }
     public Partner? Partner { get; set; }
+
+    // Direct partner name input (used when PartnerId is null, or as display cache)
+    [MaxLength(200)]
+    public string PartnerName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Display name: prioritize linked Partner, fallback to typed PartnerName
+    /// </summary>
+    public string DisplayPartnerName => Partner?.Name ?? PartnerName;
 
     public TradeOrderType OrderType { get; set; } = TradeOrderType.Purchase;
 
